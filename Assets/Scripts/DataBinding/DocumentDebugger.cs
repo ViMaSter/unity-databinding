@@ -19,15 +19,14 @@ namespace DataBinding
         {
             _document = GetComponent<Document>();
             Debug.Assert(_document != null, "Document debugger must be attached to the same game object as the Document component");
-            _document.Subscribe(debugPath, OnToggleDebugFlag);
+            _document.Subscribe<bool>(debugPath, OnToggleDebugFlag);
 
             //debugHelperObject = Instantiate()
         }
 
-        private void OnToggleDebugFlag(JToken obj)
+        private void OnToggleDebugFlag(bool newValue)
         {
-            _isShown = obj.ToObject<bool>();
-
+            _isShown = newValue;
             _text.GetComponentInParent<Canvas>().enabled = _isShown;
         }
 

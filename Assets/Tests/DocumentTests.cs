@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace Tests.DataBinding
@@ -50,6 +51,49 @@ namespace Tests.DataBinding
             global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
             document.Set(path, value);
             Assert.AreEqual(JsonConvert.SerializeObject(value), JsonConvert.SerializeObject(document.Get(path, value.GetType())));
+        }
+
+        [Test]
+        public void GetKeysFromJToken_PrintsAllPaths()
+        {
+            const string prefix = "object.array[4].subObject";
+            object newValueObject = new {
+                stringValue = "abc",
+                intArray = new int[] {
+                    1, 2, 3
+                },
+                objectArray = new object[] {
+                    new {
+                        a = 1
+                    },
+                    new {
+                        b = 2
+                    },
+                    new {
+                        c = 3
+                    }
+                }
+            };
+            var actual = global::DataBinding.Document.GetKeysFromJToken(JToken.FromObject(newValueObject), prefix);
+            var expected = new string[] {
+                "object",
+                "object.array",
+                "object.array[4]",
+                "object.array[4].subObject",
+                "object.array[4].subObject.stringValue",
+                "object.array[4].subObject.intArray",
+                "object.array[4].subObject.intArray[0]",
+                "object.array[4].subObject.intArray[1]",
+                "object.array[4].subObject.intArray[2]",
+                "object.array[4].subObject.objectArray",
+                "object.array[4].subObject.objectArray[0]",
+                "object.array[4].subObject.objectArray[0].a",
+                "object.array[4].subObject.objectArray[1]",
+                "object.array[4].subObject.objectArray[1].b",
+                "object.array[4].subObject.objectArray[2]",
+                "object.array[4].subObject.objectArray[2].c",
+            };
+            Assert.AreEqual(expected.OrderBy(value=>value), actual.OrderBy(value=>value));
         }
 
     }
