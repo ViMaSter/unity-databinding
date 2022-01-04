@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
@@ -9,7 +8,6 @@ using UnityEngine;
 
 namespace DataBinding
 {
-
     [DefaultExecutionOrder(-102)]
     public class Document : MonoBehaviour
     {
@@ -189,25 +187,54 @@ namespace DataBinding
             return result;
         }
 
-        public static IEnumerable<string> GetKeysFromJToken(JToken jToken, string prefix)
+        public static IEnumerable<string> GetKeysFromPath(string path)
+        { 
+            var allPathParts = path.Split('.');
+            List<string> pathParts = new List<string>();
+            var newElements = new List<string>(allPathParts.Length);
+            foreach (string key in allPathParts)
+            {
+                var openIndex = key.IndexOf("[", StringComparison.Ordinal);
+                if (openIndex != -1)
+                {
+                    Debug.Assert(key.IndexOf("]", StringComparison.Ordinal) != -1, $"Key '{key}' of path '{path}' starts with [ but has no ]");
+                    newElements.Add($"{string.Join(".", pathParts)}.{key.Substring(0, openIndex)}");
+                }
+
+                pathParts.Add(key);
+                newElements.Add(string.Join(".", pathParts));
+            }
+
+            return newElements;
+        }
+
+        public static IEnumerable<string> GetKeysFromJToken(JToken jToken)
         {
             switch (jToken.Type)
             {
                 case JTokenType.Object:
-                {
-                    var jObject = (JObject)jToken;
-                    var subObjects = jObject.Properties().Where(property => property.Value.Type == JTokenType.Object).SelectMany(subProperties => subProperties.Value.Values()).Select(subProperty => GetKeysFromJToken(subProperty, prefix)).ToList().SelectMany(key => key);
-                    var subArrays = jObject.Properties().Where(property => property.Value.Type == JTokenType.Array).SelectMany(subProperties => subProperties.Value.Values()).Select(subProperty => GetKeysFromJToken(subProperty, prefix)).ToList().SelectMany(key => key);
-                    var keys  = jObject.Properties().Select(property => prefix + property.Path);
+                    var jObject = (JObject) jToken;
+                    var nestedObjects = jObject.Properties().Where(property => property.Value.Type == JTokenType.Object).SelectMany(subProperties => subProperties.Value.Values()).Select(GetKeysFromJToken).ToList().SelectMany(key => key);
+                    var nestedArrays = jObject.Properties().Where(property => property.Value.Type == JTokenType.Array).SelectMany(subProperties => subProperties.Value.Values()).Select(GetKeysFromJToken).ToList().SelectMany(key => key);
+                    var directKeys = jObject.Properties().Select(property => property.Path);
+                    var nestedArrayKeys = jObject.Properties().Where(property => property.Value.Type == JTokenType.Array).SelectMany(subProperties => subProperties.Values()).Where(value => value.Type == JTokenType.Object).Select(objectValue => objectValue.Path);
+                    var results = nestedObjects.Concat(nestedArrays).Concat(directKeys).Concat(nestedArrayKeys);
 
-                    return subObjects.Concat(subArrays).Concat(keys).Append((prefix + jToken.Path).TrimEnd('.'));
-                }
+                    if (!string.IsNullOrEmpty(jToken.Path))
+                    {
+                        results = results.Append(jToken.Path);
+                    }
+
+                    return results;
                 case JTokenType.Array:
-                {
-                    return ((JArray)jToken).SelectMany(array => GetKeysFromJToken(array, prefix));
-                }
+                    return ((JArray)jToken).SelectMany(GetKeysFromJToken);
                 default:
-                    return new List<string>() {prefix.TrimEnd('.') + jToken.Path};
+                    if (!string.IsNullOrEmpty(jToken.Path))
+                    {
+                        return new[]{string.Join(".", jToken.Path) };
+                    }
+
+                    return Array.Empty<string>();
             }
         }
 
@@ -225,11 +252,10 @@ namespace DataBinding
             {
                 int arraySize = 0;
                 int indexOfArrayOpenBracket = -1;
-                int indexOfArrayClosingBracket = -1;
                 if (keyInPath.Contains("["))
                 {
                     indexOfArrayOpenBracket = keyInPath.IndexOf("[", StringComparison.Ordinal);
-                    indexOfArrayClosingBracket = keyInPath.IndexOf("]", StringComparison.Ordinal);
+                    int indexOfArrayClosingBracket = keyInPath.IndexOf("]", StringComparison.Ordinal);
                     var canParseInt = int.TryParse(keyInPath.Substring(indexOfArrayOpenBracket+1, keyInPath.Length - indexOfArrayClosingBracket), out arraySize);
                     ++arraySize;
                     Debug.Assert(canParseInt, $"Unable to parse index operator of '{keyInPath}' of '{path}'");
@@ -302,7 +328,7 @@ namespace DataBinding
             IEnumerable<string> subscriptionPathsToInform = new[] { path };
             if (valueAsJToken != null)
             {
-                subscriptionPathsToInform = GetKeysFromJToken(valueAsJToken, path + ".").ToList();
+                subscriptionPathsToInform = GetKeysFromJToken(valueAsJToken).Concat(GetKeysFromPath(path));
             }
 
             var subscriptionsToInform = _typeSpecificSubscriptions.Where(keyValue => subscriptionPathsToInform.Contains(keyValue.Key));
@@ -320,7 +346,7 @@ namespace DataBinding
             IEnumerable<string> subscriptionPathsToInform = new []{path};
             if (valueAsJToken != null)
             {
-                subscriptionPathsToInform = GetKeysFromJToken(valueAsJToken, path + ".").ToList();
+                subscriptionPathsToInform = GetKeysFromJToken(valueAsJToken).Concat(GetKeysFromPath(path));
             }
             Debug.Log($"Attempting to inform about change of '{path}' to '{valueAsJToken}'\r\nPaths informed: '{string.Join("','", subscriptionPathsToInform)}'");
 

@@ -1,6 +1,3 @@
-using System.Reflection;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -19,12 +16,15 @@ namespace DataBinding
         {
             _document = GetComponent<Document>();
             Debug.Assert(_document != null, "Document debugger must be attached to the same game object as the Document component");
-            _document.Subscribe<bool>(debugPath, OnToggleDebugFlag);
+            _document.Subscribe(debugPath, OnToggleDebugFlag);
+
+            //debugHelperObject = Instantiate()
         }
 
-        private void OnToggleDebugFlag(bool newValue)
+        private void OnToggleDebugFlag(JToken obj)
         {
-            _isShown = newValue;
+            _isShown = obj.ToObject<bool>();
+
             _text.GetComponentInParent<Canvas>().enabled = _isShown;
         }
 

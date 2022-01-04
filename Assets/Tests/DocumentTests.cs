@@ -54,10 +54,27 @@ namespace Tests.DataBinding
         }
 
         [Test]
-        public void GetKeysFromJToken_PrintsAllPaths()
+        public void GetKeysFromPath_PrintsAllPaths()
         {
-            const string prefix = "object.array[4].subObject";
-            object newValueObject = new {
+            const string path = "object.array[4].subObject";
+            var actual = global::DataBinding.Document.GetKeysFromPath(path);
+            var expected = new string[] {
+                "object",
+                "object.array",
+                "object.array[4]",
+                "object.array[4].subObject"
+            };
+            Assert.AreEqual(
+                expected.OrderBy(value => value),
+                actual.OrderBy(value => value)
+            );
+        }
+
+        [Test]
+        public void GetKeysFromJToken_WithoutPrefix_PrintsAllPaths()
+        {
+            object newValueObject = new
+            {
                 stringValue = "abc",
                 intArray = new int[] {
                     1, 2, 3
@@ -74,12 +91,52 @@ namespace Tests.DataBinding
                     }
                 }
             };
-            var actual = global::DataBinding.Document.GetKeysFromJToken(JToken.FromObject(newValueObject), prefix);
+            var actual = global::DataBinding.Document.GetKeysFromJToken(JToken.FromObject(newValueObject));
             var expected = new string[] {
-                "object",
-                "object.array",
-                "object.array[4]",
-                "object.array[4].subObject",
+                "stringValue",
+                "intArray",
+                "intArray[0]",
+                "intArray[1]",
+                "intArray[2]",
+                "objectArray",
+                "objectArray[0]",
+                "objectArray[0].a",
+                "objectArray[1]",
+                "objectArray[1].b",
+                "objectArray[2]",
+                "objectArray[2].c",
+            };
+            var a = 3;
+            Assert.AreEqual(
+                expected.OrderBy(value => value),
+                actual.OrderBy(value => value)
+            );
+        }
+
+        [Test]
+        public void GetKeysFromJToken_WithPrefix_PrintsAllPaths()
+        {
+            const string prefix = "object.array[4].subObject";
+            object newValueObject = new
+            {
+                stringValue = "abc",
+                intArray = new int[] {
+                    1, 2, 3
+                },
+                objectArray = new object[] {
+                    new {
+                        a = 1
+                    },
+                    new {
+                        b = 2
+                    },
+                    new {
+                        c = 3
+                    }
+                }
+            };
+            var actual = global::DataBinding.Document.GetKeysFromJToken(JToken.FromObject(newValueObject)).Select(path => $"{prefix}.{path}").ToList();
+            var expected = new string[] {
                 "object.array[4].subObject.stringValue",
                 "object.array[4].subObject.intArray",
                 "object.array[4].subObject.intArray[0]",
@@ -93,7 +150,11 @@ namespace Tests.DataBinding
                 "object.array[4].subObject.objectArray[2]",
                 "object.array[4].subObject.objectArray[2].c",
             };
-            Assert.AreEqual(expected.OrderBy(value=>value), actual.OrderBy(value=>value));
+            var a = 3;
+            Assert.AreEqual(
+                expected.OrderBy(value => value),
+                actual.OrderBy(value => value)
+            );
         }
 
     }
