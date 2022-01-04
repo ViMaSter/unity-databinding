@@ -20,8 +20,6 @@ namespace DataBinding
             _document = GetComponent<Document>();
             Debug.Assert(_document != null, "Document debugger must be attached to the same game object as the Document component");
             _document.Subscribe<bool>(debugPath, OnToggleDebugFlag);
-
-            //debugHelperObject = Instantiate()
         }
 
         private void OnToggleDebugFlag(bool newValue)

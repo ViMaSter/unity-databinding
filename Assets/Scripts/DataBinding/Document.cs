@@ -322,6 +322,7 @@ namespace DataBinding
             {
                 subscriptionPathsToInform = GetKeysFromJToken(valueAsJToken, path + ".").ToList();
             }
+            Debug.Log($"Attempting to inform about change of '{path}' to '{valueAsJToken}'\r\nPaths informed: '{string.Join("','", subscriptionPathsToInform)}'");
 
             var subscriptionsToInform = _typeSpecificSubscriptions.Where(keyValue => subscriptionPathsToInform.Contains(keyValue.Key));
             foreach (KeyValuePair<string, Dictionary<Type, ISubscriptionCollection>> typeSpecificSubscribersByPath in subscriptionsToInform)
@@ -333,8 +334,14 @@ namespace DataBinding
                     Debug.LogWarning($"{count} subscribers of path '{typeSpecificSubscribersByPath.Key}' are of '{typeName}', but the current value is of type '{typeof(T).Name}'");
                 }
             }
-            _typeSpecificSubscriptions[path][typeof(T)].CallSubscriptions(valueAsJToken.ToObject<T>());
-            Debug.Log($"Set '{path}' to '{valueAsJToken}'\r\nAttempted to inform subscriptions for: '{string.Join("','", subscriptionPathsToInform)}'");
+
+            if (_typeSpecificSubscriptions.ContainsKey(path))
+            {
+                if (_typeSpecificSubscriptions[path].ContainsKey(typeof(T)))
+                {
+                    _typeSpecificSubscriptions[path][typeof(T)].CallSubscriptions(valueAsJToken.ToObject<T>());
+                }
+            }
         }
 
         /// <summary>
