@@ -13,8 +13,8 @@ namespace Tests.DataBinding.Document.Unsubscribe
         [Test]
         public void SpecificType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
             Assert.False(document.Unsubscribe(DATABINDING_PATH, (Action<string>)(path => { })));
         }
@@ -22,8 +22,8 @@ namespace Tests.DataBinding.Document.Unsubscribe
         [Test]
         public void AgnosticType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
             Assert.False(document.Unsubscribe(DATABINDING_PATH, (path => { })));
         }
@@ -38,10 +38,10 @@ namespace Tests.DataBinding.Document.Unsubscribe
         [Test]
         public void CorrectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
 
             void Callback(string path)
             {
@@ -59,10 +59,10 @@ namespace Tests.DataBinding.Document.Unsubscribe
         [Test]
         public void IncorrectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
 
             void Callback(int path)
             {
@@ -82,14 +82,14 @@ namespace Tests.DataBinding.Document.Unsubscribe
         [Test]
         public void IndirectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
 
             void Callback(JToken token)
             {
-                string path = token.ToObject<string>();
+                var path = token.ToObject<string>();
                 called = path == CORRECT_VALUE;
             }
 
@@ -115,10 +115,10 @@ namespace Tests.DataBinding.Document.Unsubscribe
         [Test]
         public void DirectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
             void Callback(NestedValue nest)
             {
                 called = nest.StringValue == CORRECT_VALUE;
@@ -135,10 +135,10 @@ namespace Tests.DataBinding.Document.Unsubscribe
         [Test]
         public void IncorrectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
             void Callback(string nest)
             {
                 called = nest == CORRECT_VALUE;
@@ -157,13 +157,13 @@ namespace Tests.DataBinding.Document.Unsubscribe
         [Test]
         public void IndirectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
             void Callback(JToken token)
             {
-                NestedValue nestedValue = token.ToObject<NestedValue>();
+                var nestedValue = token.ToObject<NestedValue>();
                 called = nestedValue!.StringValue == CORRECT_VALUE;
             }
 

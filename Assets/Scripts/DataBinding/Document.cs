@@ -70,14 +70,14 @@ namespace DataBinding
 
             ((SubscriptionCollection<T>)_typeSpecificSubscriptions[path][typeof(T)]).Add(action);
 
-            JToken? currentValue = _documentRoot.SelectToken(path, false);
+            var currentValue = _documentRoot.SelectToken(path, false);
             if (currentValue == null)
             {
                 return action;
             }
 
             T attemptedCast = default;
-            bool successfulCast = false;
+            var successfulCast = false;
             try
             {
                 attemptedCast = currentValue.ToObject<T>();
@@ -114,7 +114,7 @@ namespace DataBinding
             }
 
             _typeAgnosticSubscriptions[path].Add(action);
-            JToken? currentValue = _documentRoot.SelectToken(path, false);
+            var currentValue = _documentRoot.SelectToken(path, false);
             if (currentValue != null)
             {
                 action(currentValue);
@@ -195,7 +195,7 @@ namespace DataBinding
             List<string> newElements = new List<string>(allPathParts.Length);
             foreach (string key in allPathParts)
             {
-                int openIndex = key.IndexOf("[", StringComparison.Ordinal);
+                var openIndex = key.IndexOf("[", StringComparison.Ordinal);
                 if (openIndex != -1)
                 {
                     Debug.Assert(key.IndexOf("]", StringComparison.Ordinal) != -1, $"Key '{key}' of path '{path}' starts with [ but has no ]");
@@ -252,20 +252,20 @@ namespace DataBinding
             List<(string parentPath, Type valueType)> parentUpdates = new List<(string parentPath, Type valueType)>();
             foreach (string keyInPath in splitPath)
             {
-                int arraySize = 0;
-                int indexOfArrayOpenBracket = -1;
+                var arraySize = 0;
+                var indexOfArrayOpenBracket = -1;
                 if (keyInPath.Contains("["))
                 {
                     indexOfArrayOpenBracket = keyInPath.IndexOf("[", StringComparison.Ordinal);
-                    int indexOfArrayClosingBracket = keyInPath.IndexOf("]", StringComparison.Ordinal);
-                    bool canParseInt = int.TryParse(keyInPath.Substring(indexOfArrayOpenBracket+1, keyInPath.Length - indexOfArrayClosingBracket), out arraySize);
+                    var indexOfArrayClosingBracket = keyInPath.IndexOf("]", StringComparison.Ordinal);
+                    var canParseInt = int.TryParse(keyInPath.Substring(indexOfArrayOpenBracket+1, keyInPath.Length - indexOfArrayClosingBracket), out arraySize);
                     ++arraySize;
                     Debug.Assert(canParseInt, $"Unable to parse index operator of '{keyInPath}' of '{path}'");
-                    bool hasClosingBracket = keyInPath.Contains("]");
+                    var hasClosingBracket = keyInPath.Contains("]");
                     Debug.Assert(hasClosingBracket, $"Found [ but no matching ] inside path '{path}'");
                 }
                 currentPath += keyInPath;
-                JToken? tokenAtPath = _documentRoot.SelectToken(currentPath);
+                var tokenAtPath = _documentRoot.SelectToken(currentPath);
                 if (tokenAtPath == null)
                 {
                     List<string> list = currentPath.Split('.').ToList();
@@ -300,7 +300,7 @@ namespace DataBinding
 
             parentUpdates = parentUpdates.Where(parentUpdate => parentUpdate.parentPath != path).ToList();
 
-            JToken? tokenOfPathInDocument = _documentRoot.SelectToken(path);
+            var tokenOfPathInDocument = _documentRoot.SelectToken(path);
             tokenOfPathInDocument!.Replace(valueAsJToken);
 
             foreach ((string parentPath, Type valueType) in parentUpdates)
@@ -323,7 +323,7 @@ namespace DataBinding
                 throw new ArgumentException("'path' cannot be empty or null", path);
             }
 
-            JToken? child = _documentRoot.SelectToken(path!);
+            var child = _documentRoot.SelectToken(path!);
             if (child == null)
             {
                 return false;
@@ -341,7 +341,7 @@ namespace DataBinding
             }
 
             InformSubscribersForPathDeletion(path!);
-            ((JObject)parent).Remove(childKey);
+            ((JObject)parent!).Remove(childKey);
             return true;
         }
 
@@ -350,16 +350,16 @@ namespace DataBinding
             IEnumerable<string> subscriptionPathsToInform = new[] { path };
 
             IEnumerable<KeyValuePair<string, Dictionary<Type, ISubscriptionCollection>>> typeSpecificSubscribersToInform = _typeSpecificSubscriptions.Where(keyValue => subscriptionPathsToInform.Contains(keyValue.Key));
-            foreach (KeyValuePair<string, Dictionary<Type, ISubscriptionCollection>> typeSpecificSubscribersByPath in typeSpecificSubscribersToInform)
+            foreach (var typeSpecificSubscribersByPath in typeSpecificSubscribersToInform)
             {
-                foreach (KeyValuePair<Type, ISubscriptionCollection> keyValuePair in typeSpecificSubscribersByPath.Value)
+                foreach (var keyValuePair in typeSpecificSubscribersByPath.Value)
                 {
                     keyValuePair.Value.CallSubscriptions(null);
                 }
             }
 
             IEnumerable<KeyValuePair<string, SubscriptionCollection<JToken>>> typeAgnosticSubscribersToInform = _typeAgnosticSubscriptions.Where(keyValue => subscriptionPathsToInform.Contains(keyValue.Key));
-            foreach (KeyValuePair<string, SubscriptionCollection<JToken>> keyValuePair in typeAgnosticSubscribersToInform)
+            foreach (var keyValuePair in typeAgnosticSubscribersToInform)
             {
                 keyValuePair.Value.CallSubscriptions(null);
             }
@@ -374,7 +374,7 @@ namespace DataBinding
                     return;
                 }
 
-                foreach (KeyValuePair<Type, ISubscriptionCollection> subscriberCollectionByType in _typeSpecificSubscriptions[innerPath])
+                foreach (var subscriberCollectionByType in _typeSpecificSubscriptions[innerPath])
                 {
                     if (subscriberCollectionByType.Value.Count == 0)
                     {

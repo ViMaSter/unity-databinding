@@ -71,10 +71,10 @@ namespace Tests.DataBinding.Document
             var informedAgnosticExactPathSubscriber = false;
             var informedSpecificChildPathSubscriber = false;
             var informedSpecificExactPathSubscriber = false;
-            document.Subscribe(PATH, (jToken) => {
+            document.Subscribe(PATH, jToken => {
                 informedAgnosticChildPathSubscriber = true;
             });
-            document.Subscribe(rootPath, (jToken) => {
+            document.Subscribe(rootPath, jToken => {
                 informedAgnosticExactPathSubscriber = true;
             });
             document.Subscribe(PATH, (JObject jObject) => {

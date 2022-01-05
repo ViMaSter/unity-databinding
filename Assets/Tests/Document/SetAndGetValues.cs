@@ -48,8 +48,8 @@ namespace Tests.DataBinding
             [TestCaseSource(nameof(TestCaseSource))]
             public void WorksWithVariousObjects(string path, object value)
             {
-                GameObject gameObject = new GameObject();
-                global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+                var gameObject = new GameObject();
+                var document = gameObject.AddComponent<global::DataBinding.Document>();
                 document.Set(path, value);
                 Assert.AreEqual(JsonConvert.SerializeObject(value), JsonConvert.SerializeObject(document.Get(path, value.GetType())));
             }

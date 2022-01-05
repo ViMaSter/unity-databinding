@@ -10,7 +10,7 @@ namespace Tests.DataBinding.Document
         public void PrintsAllPaths()
         {
             const string path = "object.array[4].subObject";
-            IEnumerable<string> actual = global::DataBinding.Document.GetKeysFromPath(path);
+            var actual = global::DataBinding.Document.GetKeysFromPath(path);
             string[] expected = {
                 "object",
                 "object.array",

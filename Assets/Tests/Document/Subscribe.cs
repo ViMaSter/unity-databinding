@@ -15,10 +15,10 @@ namespace Tests.DataBinding.Document.Subscribe
         [Test]
         public void ToDirectPathAndCorrectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
             void Callback(string path)
             {
                 called = path == CORRECT_VALUE;
@@ -34,10 +34,10 @@ namespace Tests.DataBinding.Document.Subscribe
         [Test]
         public void ToDirectPathAndIncorrectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
             void Callback(int path)
             {
                 called = true;
@@ -57,13 +57,13 @@ namespace Tests.DataBinding.Document.Subscribe
         [Test]
         public void ToDirectPathAndIndirectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
             void Callback(JToken token)
             {
-                string path = token.ToObject<string>();
+                var path = token.ToObject<string>();
                 called = path == CORRECT_VALUE;
             }
 
@@ -81,10 +81,10 @@ namespace Tests.DataBinding.Document.Subscribe
         [Test]
         public void ToNestedPathAndDirectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
             void Callback(NestedValue nest)
             {
                 called = nest.StringValue == CORRECT_VALUE;
@@ -100,10 +100,10 @@ namespace Tests.DataBinding.Document.Subscribe
         [Test]
         public void ToNestedPathAndIncorrectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
             void Callback(string nest)
             {
                 called = nest == CORRECT_VALUE;
@@ -123,13 +123,13 @@ namespace Tests.DataBinding.Document.Subscribe
         [Test]
         public void NoValueAtPath_ToNestedPathAndIndirectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
             void Callback(JToken token)
             {
-                NestedValue nestedValue = token.ToObject<NestedValue>();
+                var nestedValue = token.ToObject<NestedValue>();
                 called = nestedValue!.StringValue == CORRECT_VALUE;
             }
 
@@ -150,10 +150,10 @@ namespace Tests.DataBinding.Document.Subscribe
         [Test]
         public void ToDirectPathAndCorrectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
             void Callback(string path)
             {
                 called = path == CORRECT_VALUE;
@@ -169,10 +169,10 @@ namespace Tests.DataBinding.Document.Subscribe
         [Test]
         public void ToDirectPathAndIncorrectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
             void Callback(int path)
             {
                 called = true;
@@ -192,13 +192,13 @@ namespace Tests.DataBinding.Document.Subscribe
         [Test]
         public void ToDirectPathAndIndirectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
             void Callback(JToken token)
             {
-                string path = token.ToObject<string>();
+                var path = token.ToObject<string>();
                 called = path == CORRECT_VALUE;
             }
 
@@ -216,10 +216,10 @@ namespace Tests.DataBinding.Document.Subscribe
         [Test]
         public void ToNestedPathAndDirectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
             void Callback(NestedValue nest)
             {
                 called = nest.StringValue == CORRECT_VALUE;
@@ -235,10 +235,10 @@ namespace Tests.DataBinding.Document.Subscribe
         [Test]
         public void ToNestedPathAndIncorrectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
             void Callback(string nest)
             {
                 called = nest == CORRECT_VALUE;
@@ -258,13 +258,13 @@ namespace Tests.DataBinding.Document.Subscribe
         [Test]
         public void NoValueAtPath_ToNestedPathAndIndirectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
             void Callback(JToken token)
             {
-                NestedValue nestedValue = token.ToObject<NestedValue>();
+                var nestedValue = token.ToObject<NestedValue>();
                 called = nestedValue!.StringValue == CORRECT_VALUE;
             }
 
@@ -278,10 +278,10 @@ namespace Tests.DataBinding.Document.Subscribe
         [Test]
         public void ValueAtPath_ToDirectPathAndCorrectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
             void Callback(string path)
             {
                 called = path == CORRECT_VALUE;
@@ -297,10 +297,10 @@ namespace Tests.DataBinding.Document.Subscribe
         [Test]
         public void ValueAtPath_ToDirectPathAndIncorrectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
             void Callback(int path)
             {
                 called = true;
@@ -319,13 +319,13 @@ namespace Tests.DataBinding.Document.Subscribe
         [Test]
         public void ValueAtPath_ToDirectPathAndIndirectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
             void Callback(JToken token)
             {
-                string path = token.ToObject<string>();
+                var path = token.ToObject<string>();
                 called = path == CORRECT_VALUE;
             }
 
@@ -338,10 +338,10 @@ namespace Tests.DataBinding.Document.Subscribe
         [Test]
         public void ValueAtPath_ToNestedPathAndDirectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
             void Callback(NestedValue nest)
             {
                 called = nest.StringValue == CORRECT_VALUE;
@@ -357,10 +357,10 @@ namespace Tests.DataBinding.Document.Subscribe
         [Test]
         public void ValueAtPath_ToNestedPathAndIncorrectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
             void Callback(string nest)
             {
                 called = nest == CORRECT_VALUE;
@@ -379,13 +379,13 @@ namespace Tests.DataBinding.Document.Subscribe
         [Test]
         public void ValueAtPath_ToNestedPathAndIndirectType()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            bool called = false;
+            var called = false;
             void Callback(JToken token)
             {
-                NestedValue nestedValue = token.ToObject<NestedValue>();
+                var nestedValue = token.ToObject<NestedValue>();
                 called = nestedValue!.StringValue == CORRECT_VALUE;
             }
 

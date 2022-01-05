@@ -60,7 +60,7 @@ namespace DataBinding.Examples.Prefabs
                     return;
                 }
 
-                int labelAsInt = int.Parse(_document.Get<string>($"{_keyRoot}[{_currentCount - 1}].label.text"));
+                var labelAsInt = int.Parse(_document.Get<string>($"{_keyRoot}[{_currentCount - 1}].label.text"));
                 ++labelAsInt;
 
                 _document.Set($"{_keyRoot}[{_currentCount - 1}].{nameof(DataSet.Label)}.{nameof(DataSet.LabelValues.text)}", labelAsInt.ToString());

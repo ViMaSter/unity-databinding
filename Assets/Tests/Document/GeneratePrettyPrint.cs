@@ -26,13 +26,13 @@ namespace Tests.DataBinding.Document
         [Test]
         public void IsEqualToSerializedDictionary()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            TestValue testValue = new TestValue(new TestValue(null));
+            var testValue = new TestValue(new TestValue(null));
 
             document.Set(nameof(testValue), testValue);
-            var expected = JsonConvert.SerializeObject(new Dictionary<string, object>() {{nameof(testValue), testValue}}, Formatting.Indented);
+            var expected = JsonConvert.SerializeObject(new Dictionary<string, object> {{nameof(testValue), testValue}}, Formatting.Indented);
             var actual = document.GeneratePrettyPrint();
             Assert.AreEqual(expected, actual);
         }

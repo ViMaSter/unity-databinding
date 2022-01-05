@@ -9,8 +9,8 @@ namespace Tests.DataBinding.Document
         [Test]
         public void ThrowsIfSamePathIsSetWithDifferentValueTypes()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
             document.Set("path", 1);
             Assert.Throws<NotSupportedException>(() => {
@@ -20,8 +20,8 @@ namespace Tests.DataBinding.Document
         [Test]
         public void ThrowsIfSamePathIsSetWithDifferentValueAfterBeingDeletedFirstTypes()
         {
-            GameObject gameObject = new GameObject();
-            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
 
             document.Set("path", 1);
             document.Delete("path");
