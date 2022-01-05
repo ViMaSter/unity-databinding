@@ -4,27 +4,52 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace Tests.DataBinding.Document
+namespace Tests.DataBinding.Document.Unsubscribe
 {
-    internal class Unsubscribe
+    internal class ToPathWithNoSubscription
+    {
+        private const string DATABINDING_PATH = "path";
+
+        [Test]
+        public void SpecificType()
+        {
+            GameObject gameObject = new GameObject();
+            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+
+            Assert.False(document.Unsubscribe(DATABINDING_PATH, (Action<string>)(path => { })));
+        }
+
+        [Test]
+        public void AgnosticType()
+        {
+            GameObject gameObject = new GameObject();
+            global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
+
+            Assert.False(document.Unsubscribe(DATABINDING_PATH, (path => { })));
+        }
+    }
+
+    internal class ToDirectPath
     {
         private const string DATABINDING_PATH = "path";
         private const string CORRECT_VALUE = "C:/";
         private const string INCORRECT_VALUE = "wrong";
+
         [Test]
-        public void ToDirectPathAndCorrectType()
+        public void CorrectType()
         {
             GameObject gameObject = new GameObject();
             global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
 
             bool called = false;
+
             void Callback(string path)
             {
                 called = path == CORRECT_VALUE;
             }
 
-            document.Subscribe(DATABINDING_PATH, (Action<string>)Callback);
-            document.Unsubscribe(DATABINDING_PATH, (Action<string>)Callback);
+            document.Subscribe(DATABINDING_PATH, (Action<string>) Callback);
+            document.Unsubscribe(DATABINDING_PATH, (Action<string>) Callback);
             document.Set(DATABINDING_PATH, CORRECT_VALUE);
             Assert.IsFalse(called);
             document.Set(DATABINDING_PATH, INCORRECT_VALUE);
@@ -32,19 +57,20 @@ namespace Tests.DataBinding.Document
         }
 
         [Test]
-        public void ToDirectPathAndIncorrectType()
+        public void IncorrectType()
         {
             GameObject gameObject = new GameObject();
             global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
 
             bool called = false;
+
             void Callback(int path)
             {
                 called = true;
             }
 
-            document.Subscribe(DATABINDING_PATH, (Action<int>)Callback);
-            document.Unsubscribe(DATABINDING_PATH, (Action<int>)Callback);
+            document.Subscribe(DATABINDING_PATH, (Action<int>) Callback);
+            document.Unsubscribe(DATABINDING_PATH, (Action<int>) Callback);
             document.Set(DATABINDING_PATH, CORRECT_VALUE);
             Assert.IsFalse(called);
             document.Set(DATABINDING_PATH, INCORRECT_VALUE);
@@ -54,12 +80,13 @@ namespace Tests.DataBinding.Document
         }
 
         [Test]
-        public void ToDirectPathAndIndirectType()
+        public void IndirectType()
         {
             GameObject gameObject = new GameObject();
             global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
 
             bool called = false;
+
             void Callback(JToken token)
             {
                 string path = token.ToObject<string>();
@@ -73,13 +100,20 @@ namespace Tests.DataBinding.Document
             document.Set(DATABINDING_PATH, INCORRECT_VALUE);
             Assert.IsFalse(called);
         }
+    }
+
+    internal class ToNestedPath
+    {
+        private const string DATABINDING_PATH = "path";
+        private const string CORRECT_VALUE = "C:/";
+        private const string INCORRECT_VALUE = "wrong";
 
         private class NestedValue
         {
             public string StringValue = "";
         }
         [Test]
-        public void ToNestedPathAndDirectType()
+        public void DirectType()
         {
             GameObject gameObject = new GameObject();
             global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
@@ -99,7 +133,7 @@ namespace Tests.DataBinding.Document
         }
 
         [Test]
-        public void ToNestedPathAndIncorrectType()
+        public void IncorrectType()
         {
             GameObject gameObject = new GameObject();
             global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
@@ -121,7 +155,7 @@ namespace Tests.DataBinding.Document
         }
 
         [Test]
-        public void ToNestedPathAndIndirectType()
+        public void IndirectType()
         {
             GameObject gameObject = new GameObject();
             global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();

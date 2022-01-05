@@ -18,7 +18,6 @@ namespace Tests.DataBinding.Document.Subscribe
             GameObject gameObject = new GameObject();
             global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
 
-
             bool called = false;
             void Callback(string path)
             {

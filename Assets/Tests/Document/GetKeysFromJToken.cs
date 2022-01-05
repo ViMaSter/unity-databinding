@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
@@ -7,28 +6,49 @@ namespace Tests.DataBinding.Document
 {
     internal class GetKeysFromJToken
     {
-        private readonly object _nestedValueObject = new
-        {
-            stringValue = "abc",
-            intArray = new[] {
-                1, 2, 3
-            },
-            objectArray = new object[] {
-                new {
-                    a = 1
-                },
-                new {
-                    b = 2
-                },
-                new {
-                    c = 3
-                }
-            }
-        };
         [Test]
-        public void WithoutPrefix_PrintsAllPaths()
+        public void DirectSubObject()
         {
-            IEnumerable<string> actual = global::DataBinding.Document.GetKeysFromJToken(JToken.FromObject(_nestedValueObject));
+            var newObject = new {a = new {b = 3}};
+            var newObjectAsToken = JToken.FromObject(newObject);
+            var actual = global::DataBinding.Document.GetKeysFromJToken(newObjectAsToken["a"]!);
+            Assert.AreEqual(new[] { "a.b", "a" }, actual);
+        }
+        [Test]
+        public void Array()
+        {
+            var actual = global::DataBinding.Document.GetKeysFromJToken(JToken.FromObject(new[]{"a" , "b" , ""}));
+            Assert.AreEqual(new[]{ "[0]" , "[1]", "[2]" }, actual);
+        }
+
+        [Test]
+        public void Value()
+        {
+            var actual = global::DataBinding.Document.GetKeysFromJToken(JToken.FromObject(1));
+            Assert.AreEqual(new string[0], actual);
+        }
+
+        [Test]
+        public void Object()
+        {
+            var actual = global::DataBinding.Document.GetKeysFromJToken(JToken.FromObject(new
+            {
+                stringValue = "abc",
+                intArray = new[] {
+                    1, 2, 3
+                },
+                objectArray = new object[] {
+                    new {
+                        a = 1
+                    },
+                    new {
+                        b = 2
+                    },
+                    new {
+                        c = 3
+                    }
+                }
+            }));
             string[] expected = {
                 "stringValue",
                 "intArray",
@@ -48,31 +68,5 @@ namespace Tests.DataBinding.Document
                 actual.OrderBy(value => value)
             );
         }
-
-        [Test]
-        public void WithPrefix_PrintsAllPaths()
-        {
-            const string prefix = "object.array[4].subObject";
-            List<string> actual = global::DataBinding.Document.GetKeysFromJToken(JToken.FromObject(_nestedValueObject)).Select(path => $"{prefix}.{path}").ToList();
-            string[] expected = {
-                "object.array[4].subObject.stringValue",
-                "object.array[4].subObject.intArray",
-                "object.array[4].subObject.intArray[0]",
-                "object.array[4].subObject.intArray[1]",
-                "object.array[4].subObject.intArray[2]",
-                "object.array[4].subObject.objectArray",
-                "object.array[4].subObject.objectArray[0]",
-                "object.array[4].subObject.objectArray[0].a",
-                "object.array[4].subObject.objectArray[1]",
-                "object.array[4].subObject.objectArray[1].b",
-                "object.array[4].subObject.objectArray[2]",
-                "object.array[4].subObject.objectArray[2].c"
-            };
-            Assert.AreEqual(
-                expected.OrderBy(value => value),
-                actual.OrderBy(value => value)
-            );
-        }
-
     }
 }

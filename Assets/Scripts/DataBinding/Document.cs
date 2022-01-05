@@ -145,7 +145,7 @@ namespace DataBinding
         /// <param name="defaultValue">Value to return instead, if no value is found at the specified <see cref="path"/></param>
         /// <typeparam name="T">Type to cast the stored object to</typeparam>
         /// <returns>A representation of the value</returns>
-        /// <exception cref="JsonException">Thrown if the document has no value at the requested <see cref="path"/> and <see cref="defaultValue"/> is set to `null`</exception>
+        /// <exception cref="Exception">Thrown if the document has no value at the requested <see cref="path"/> and <see cref="defaultValue"/> is set to `null`</exception>
         public T Get<T>(string path, JToken? defaultValue = null)
         {
             try
@@ -153,7 +153,7 @@ namespace DataBinding
                 // ReSharper disable once PossibleNullReferenceException "False positive: will throw JsonException instead"
                 return _documentRoot.SelectToken(path, true)!.ToObject<T>()!;
             }
-            catch (JsonException)
+            catch (Exception)
             {
                 if (defaultValue != null)
                 {
@@ -178,7 +178,7 @@ namespace DataBinding
                 // ReSharper disable once PossibleNullReferenceException "False positive: will throw JsonException instead"
                 return _documentRoot.SelectToken(path, true)!.ToObject(type)!;
             }
-            catch (JsonException)
+            catch (Exception)
             {
                 if (defaultValue != null)
                 {
@@ -316,30 +316,38 @@ namespace DataBinding
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public bool Delete(string path)
+        public bool Delete(string? path)
         {
             if (string.IsNullOrEmpty(path))
             {
                 throw new ArgumentException("'path' cannot be empty or null", path);
             }
 
-            JToken? token = _documentRoot.SelectToken(path, false);
-            if (token == null)
+            JToken? child = _documentRoot.SelectToken(path!);
+            if (child == null)
             {
                 return false;
             }
-            InformSubscribersForPath(path, null);
-            token.Remove();
+
+            var splitPath = path!.Split('.').ToList();
+            var lastIndex = splitPath.Count - 1;
+            var childKey = splitPath[lastIndex];
+            splitPath.RemoveAt(lastIndex);
+
+            JToken? parent = _documentRoot;
+            if (splitPath.Any())
+            {
+                parent = _documentRoot.SelectToken(string.Join(".", splitPath), false);
+            }
+
+            InformSubscribersForPathDeletion(path!);
+            ((JObject)parent).Remove(childKey);
             return true;
         }
 
-        private void InformSubscribersForPath(string path, JToken? valueAsJToken)
+        private void InformSubscribersForPathDeletion(string path)
         {
             IEnumerable<string> subscriptionPathsToInform = new[] { path };
-            if (valueAsJToken != null)
-            {
-                subscriptionPathsToInform = GetKeysFromJToken(valueAsJToken).Concat(GetKeysFromPath(path));
-            }
 
             IEnumerable<KeyValuePair<string, Dictionary<Type, ISubscriptionCollection>>> typeSpecificSubscribersToInform = _typeSpecificSubscriptions.Where(keyValue => subscriptionPathsToInform.Contains(keyValue.Key));
             foreach (KeyValuePair<string, Dictionary<Type, ISubscriptionCollection>> typeSpecificSubscribersByPath in typeSpecificSubscribersToInform)

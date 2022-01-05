@@ -27,18 +27,18 @@ namespace Tests.DataBinding
             }
 
             private static readonly List<string> Paths = new List<string> {
-            "test",
-            "test.nested",
-            "test.nested[0].array"
-        };
-            private static readonly List<object> PrimitiveValues = new List<object> {
-            1.0f,
-            1,
-            "1.0",
-            new object[]{1.0f, 1, "1.0"},
-            new {primitiveValueA = 1.0f, primitiveValueB = 1, primitiveValueC = "1.0"},
-            new TestValue(new TestValue(null))
-        };
+                "test",
+                "test.nested",
+                "test.nested[0].array"
+            };
+                private static readonly List<object> PrimitiveValues = new List<object> {
+                1.0f,
+                1,
+                "1.0",
+                new object[]{1.0f, 1, "1.0"},
+                new {primitiveValueA = 1.0f, primitiveValueB = 1, primitiveValueC = "1.0"},
+                new TestValue(new TestValue(null))
+            };
             private static readonly IEnumerable<object> Values = PrimitiveValues
                 .Concat(PrimitiveValues.Select(primitiveValue => new[] { primitiveValue, primitiveValue, primitiveValue }))
                 .Concat(PrimitiveValues.Select(primitiveValue => new { primitiveValueA = primitiveValue, primitiveValueB = primitiveValue, primitiveValueC = primitiveValue }));
