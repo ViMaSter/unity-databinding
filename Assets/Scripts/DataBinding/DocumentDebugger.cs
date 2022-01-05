@@ -1,5 +1,6 @@
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace DataBinding
 {
@@ -8,15 +9,15 @@ namespace DataBinding
     {
         [SerializeField] private bool _isShown;
         private Document _document;
-        [SerializeField] private UnityEngine.UI.Text _text;
+        [SerializeField] private Text _text;
 
-        private const string debugPath = "_global.document.debug";
+        private const string DEBUG_PATH = "_global.document.debug";
 
         private void Start()
         {
             _document = GetComponent<Document>();
             Debug.Assert(_document != null, "Document debugger must be attached to the same game object as the Document component");
-            _document.Subscribe(debugPath, OnToggleDebugFlag);
+            _document.Subscribe(DEBUG_PATH, OnToggleDebugFlag);
 
             //debugHelperObject = Instantiate()
         }

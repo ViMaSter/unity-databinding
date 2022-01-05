@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace DataBinding
     {
         private interface ISubscriptionCollection
         {
-            public void CallSubscriptions(object value);
+            public void CallSubscriptions(object? value);
             public int Count { get; }
         }
 
@@ -31,11 +32,11 @@ namespace DataBinding
                 return _subscriptions.Remove(action);
             }
 
-            public void CallSubscriptions(object value)
+            public void CallSubscriptions(object? value)
             {
                 foreach (Action<T> subscription in _subscriptions)
                 {
-                    subscription((T)value);
+                    subscription((T)value!);
                 }
             }
 
@@ -69,7 +70,7 @@ namespace DataBinding
 
             ((SubscriptionCollection<T>)_typeSpecificSubscriptions[path][typeof(T)]).Add(action);
 
-            var currentValue = _documentRoot.SelectToken(path, false);
+            JToken? currentValue = _documentRoot.SelectToken(path, false);
             if (currentValue == null)
             {
                 return action;
@@ -89,7 +90,7 @@ namespace DataBinding
 
             if (successfulCast)
             {
-                action(attemptedCast);
+                action(attemptedCast!);
             }
 
             return action;
@@ -113,7 +114,7 @@ namespace DataBinding
             }
 
             _typeAgnosticSubscriptions[path].Add(action);
-            var currentValue = _documentRoot.SelectToken(path, false);
+            JToken? currentValue = _documentRoot.SelectToken(path, false);
             if (currentValue != null)
             {
                 action(currentValue);
@@ -145,18 +146,18 @@ namespace DataBinding
         /// <typeparam name="T">Type to cast the stored object to</typeparam>
         /// <returns>A representation of the value</returns>
         /// <exception cref="JsonException">Thrown if the document has no value at the requested <see cref="path"/> and <see cref="defaultValue"/> is set to `null`</exception>
-        public T Get<T>(string path, JToken defaultValue = null)
+        public T Get<T>(string path, JToken? defaultValue = null)
         {
             try
             {
                 // ReSharper disable once PossibleNullReferenceException "False positive: will throw JsonException instead"
-                return _documentRoot.SelectToken(path, true).ToObject<T>();
+                return _documentRoot.SelectToken(path, true)!.ToObject<T>()!;
             }
             catch (JsonException)
             {
                 if (defaultValue != null)
                 {
-                    return defaultValue.ToObject<T>();
+                    return defaultValue.ToObject<T>()!;
                 }
                 throw;
             }
@@ -170,57 +171,31 @@ namespace DataBinding
         /// <param name="defaultValue">Value to return instead, if no value is found at the specified <see cref="path"/></param>
         /// <returns>A representation of the value</returns>
         /// <exception cref="JsonException">Thrown if the document has no value at the requested <see cref="path"/> and <see cref="defaultValue"/> is set to `null`</exception>
-        public object Get(string path, Type type, JToken defaultValue = null)
+        public object Get(string path, Type type, JToken? defaultValue = null)
         {
             try
             {
                 // ReSharper disable once PossibleNullReferenceException "False positive: will throw JsonException instead"
-                return _documentRoot.SelectToken(path, true).ToObject(type);
+                return _documentRoot.SelectToken(path, true)!.ToObject(type)!;
             }
             catch (JsonException)
             {
                 if (defaultValue != null)
                 {
-                    return defaultValue.ToObject(type);
+                    return defaultValue.ToObject(type)!;
                 }
                 throw;
             }
         }
 
-        /// <summary>
-        /// Get the values for a specific path in objects inside an array
-        /// </summary>
-        /// <param name="path">Absolute path to the key of objects inside an array</param>
-        /// <returns>An enumerable of JToken representations of the values</returns>
-        /// <exception cref="JsonException">Thrown if the document has no values at the requested <see cref="path"/></exception>
-        public IEnumerable<JToken> GetKeysOfArrayOfObjects(string path)
-        {
-            return _documentRoot.SelectTokens(path, true);
-        }
-
-        private static IEnumerable<string> GetParentsFromPath(string path)
-        {
-            var splitPath = path.Trim('.').Split('.');
-            List<string> result = new List<string>();
-            string currentPath = "";
-            foreach (string partOfPath in splitPath)
-            {
-                currentPath += partOfPath;
-                result.Add(currentPath);
-                currentPath += ".";
-            }
-
-            return result;
-        }
-
         public static IEnumerable<string> GetKeysFromPath(string path)
         { 
-            var allPathParts = path.Split('.');
+            string[] allPathParts = path.Split('.');
             List<string> pathParts = new List<string>();
-            var newElements = new List<string>(allPathParts.Length);
+            List<string> newElements = new List<string>(allPathParts.Length);
             foreach (string key in allPathParts)
             {
-                var openIndex = key.IndexOf("[", StringComparison.Ordinal);
+                int openIndex = key.IndexOf("[", StringComparison.Ordinal);
                 if (openIndex != -1)
                 {
                     Debug.Assert(key.IndexOf("]", StringComparison.Ordinal) != -1, $"Key '{key}' of path '{path}' starts with [ but has no ]");
@@ -239,12 +214,12 @@ namespace DataBinding
             switch (jToken.Type)
             {
                 case JTokenType.Object:
-                    var jObject = (JObject) jToken;
-                    var nestedObjects = jObject.Properties().Where(property => property.Value.Type == JTokenType.Object).SelectMany(subProperties => subProperties.Value.Values()).Select(GetKeysFromJToken).ToList().SelectMany(key => key);
-                    var nestedArrays = jObject.Properties().Where(property => property.Value.Type == JTokenType.Array).SelectMany(subProperties => subProperties.Value.Values()).Select(GetKeysFromJToken).ToList().SelectMany(key => key);
-                    var directKeys = jObject.Properties().Select(property => property.Path);
-                    var nestedArrayKeys = jObject.Properties().Where(property => property.Value.Type == JTokenType.Array).SelectMany(subProperties => subProperties.Values()).Where(value => value.Type == JTokenType.Object).Select(objectValue => objectValue.Path);
-                    var results = nestedObjects.Concat(nestedArrays).Concat(directKeys).Concat(nestedArrayKeys);
+                    JObject jObject = (JObject) jToken;
+                    IEnumerable<string> nestedObjects = jObject.Properties().Where(property => property.Value.Type == JTokenType.Object).SelectMany(subProperties => subProperties.Value.Values()).Select(GetKeysFromJToken).ToList().SelectMany(key => key);
+                    IEnumerable<string> nestedArrays = jObject.Properties().Where(property => property.Value.Type == JTokenType.Array).SelectMany(subProperties => subProperties.Value.Values()).Select(GetKeysFromJToken).ToList().SelectMany(key => key);
+                    IEnumerable<string> directKeys = jObject.Properties().Select(property => property.Path);
+                    IEnumerable<string> nestedArrayKeys = jObject.Properties().Where(property => property.Value.Type == JTokenType.Array).SelectMany(subProperties => subProperties.Values()).Where(value => value.Type == JTokenType.Object).Select(objectValue => objectValue.Path);
+                    IEnumerable<string> results = nestedObjects.Concat(nestedArrays).Concat(directKeys).Concat(nestedArrayKeys);
 
                     if (!string.IsNullOrEmpty(jToken.Path))
                     {
@@ -271,9 +246,9 @@ namespace DataBinding
         /// <param name="value">Value to start at <see cref="path"/></param>
         public void Set<T>(string path, T value)
         {
-            JToken valueAsJToken = JToken.FromObject(value);
-            var splitPath = path.Split('.').ToList();
-            var currentPath = "";
+            JToken valueAsJToken = JToken.FromObject(value!);
+            List<string> splitPath = path.Split('.').ToList();
+            string currentPath = "";
             List<(string parentPath, Type valueType)> parentUpdates = new List<(string parentPath, Type valueType)>();
             foreach (string keyInPath in splitPath)
             {
@@ -283,38 +258,37 @@ namespace DataBinding
                 {
                     indexOfArrayOpenBracket = keyInPath.IndexOf("[", StringComparison.Ordinal);
                     int indexOfArrayClosingBracket = keyInPath.IndexOf("]", StringComparison.Ordinal);
-                    var canParseInt = int.TryParse(keyInPath.Substring(indexOfArrayOpenBracket+1, keyInPath.Length - indexOfArrayClosingBracket), out arraySize);
+                    bool canParseInt = int.TryParse(keyInPath.Substring(indexOfArrayOpenBracket+1, keyInPath.Length - indexOfArrayClosingBracket), out arraySize);
                     ++arraySize;
                     Debug.Assert(canParseInt, $"Unable to parse index operator of '{keyInPath}' of '{path}'");
-                    var hasClosingBracket = keyInPath.Contains("]");
+                    bool hasClosingBracket = keyInPath.Contains("]");
                     Debug.Assert(hasClosingBracket, $"Found [ but no matching ] inside path '{path}'");
                 }
                 currentPath += keyInPath;
-                JToken tokenAtPath = _documentRoot.SelectToken(currentPath);
+                JToken? tokenAtPath = _documentRoot.SelectToken(currentPath);
                 if (tokenAtPath == null)
                 {
-                    var list = currentPath.Split('.').ToList();
-                    var currentKey = list[list.Count - 1];
+                    List<string> list = currentPath.Split('.').ToList();
+                    string currentKey = list[list.Count - 1];
                     if (arraySize != 0)
                     {
                         currentKey = currentKey.Substring(0, indexOfArrayOpenBracket);
                     }
                     list.RemoveAt(list.Count - 1);
-                    _documentRoot.SelectToken(string.Join(".", list))[currentKey] = arraySize == 0 ? new JObject() : new JArray(Enumerable.Range(0, arraySize).Select(i => new JObject())) as JToken;
+                    _documentRoot.SelectToken(string.Join(".", list))![currentKey] = arraySize == 0 ? new JObject() : new JArray(Enumerable.Range(0, arraySize).Select(i => new JObject())) as JToken;
                     tokenAtPath = _documentRoot.SelectToken(string.Join(".", list.Append(currentKey)));
                 }
 
-                if (tokenAtPath.Type == JTokenType.Object)
+                switch (tokenAtPath!.Type)
                 {
-                    parentUpdates.Add((currentPath, typeof(JObject)));
-                    currentPath += ".";
-                    continue;
-                }
-                if (tokenAtPath.Type == JTokenType.Array)
-                {
-                    parentUpdates.Add((currentPath, typeof(JArray)));
-                    currentPath += ".";
-                    continue;
+                    case JTokenType.Object:
+                        parentUpdates.Add((currentPath, typeof(JObject)));
+                        currentPath += ".";
+                        continue;
+                    case JTokenType.Array:
+                        parentUpdates.Add((currentPath, typeof(JArray)));
+                        currentPath += ".";
+                        continue;
                 }
 
                 if (currentPath == path && tokenAtPath.Type == valueAsJToken.Type)
@@ -326,12 +300,12 @@ namespace DataBinding
 
             parentUpdates = parentUpdates.Where(parentUpdate => parentUpdate.parentPath != path).ToList();
 
-            var tokenOfPathInDocument = _documentRoot.SelectToken(path);
-            tokenOfPathInDocument.Replace(valueAsJToken);
+            JToken? tokenOfPathInDocument = _documentRoot.SelectToken(path);
+            tokenOfPathInDocument!.Replace(valueAsJToken);
 
-            foreach (var (parentPath, valueType) in parentUpdates)
+            foreach ((string parentPath, Type valueType) in parentUpdates)
             {
-                InformSubscribersForPath(parentPath, _documentRoot.SelectToken(parentPath), valueType);
+                InformSubscribersForPath(parentPath, _documentRoot.SelectToken(parentPath)!, valueType);
             }
 
             InformSubscribersForPath(path, valueAsJToken, typeof(T));
@@ -349,7 +323,7 @@ namespace DataBinding
                 throw new ArgumentException("'path' cannot be empty or null", path);
             }
 
-            var token = _documentRoot.SelectToken(path, false);
+            JToken? token = _documentRoot.SelectToken(path, false);
             if (token == null)
             {
                 return false;
@@ -359,7 +333,7 @@ namespace DataBinding
             return true;
         }
 
-        private void InformSubscribersForPath(string path, JToken valueAsJToken)
+        private void InformSubscribersForPath(string path, JToken? valueAsJToken)
         {
             IEnumerable<string> subscriptionPathsToInform = new[] { path };
             if (valueAsJToken != null)
@@ -367,7 +341,7 @@ namespace DataBinding
                 subscriptionPathsToInform = GetKeysFromJToken(valueAsJToken).Concat(GetKeysFromPath(path));
             }
 
-            var typeSpecificSubscribersToInform = _typeSpecificSubscriptions.Where(keyValue => subscriptionPathsToInform.Contains(keyValue.Key));
+            IEnumerable<KeyValuePair<string, Dictionary<Type, ISubscriptionCollection>>> typeSpecificSubscribersToInform = _typeSpecificSubscriptions.Where(keyValue => subscriptionPathsToInform.Contains(keyValue.Key));
             foreach (KeyValuePair<string, Dictionary<Type, ISubscriptionCollection>> typeSpecificSubscribersByPath in typeSpecificSubscribersToInform)
             {
                 foreach (KeyValuePair<Type, ISubscriptionCollection> keyValuePair in typeSpecificSubscribersByPath.Value)
@@ -376,8 +350,8 @@ namespace DataBinding
                 }
             }
 
-            var typeAgnosticSubscribersToInform = _typeAgnosticSubscriptions.Where(keyValue => subscriptionPathsToInform.Contains(keyValue.Key));
-            foreach (var keyValuePair in typeAgnosticSubscribersToInform)
+            IEnumerable<KeyValuePair<string, SubscriptionCollection<JToken>>> typeAgnosticSubscribersToInform = _typeAgnosticSubscriptions.Where(keyValue => subscriptionPathsToInform.Contains(keyValue.Key));
+            foreach (KeyValuePair<string, SubscriptionCollection<JToken>> keyValuePair in typeAgnosticSubscribersToInform)
             {
                 keyValuePair.Value.CallSubscriptions(null);
             }
@@ -385,23 +359,23 @@ namespace DataBinding
 
         private void InformSubscribersForPath(string path, JToken valueAsJToken, Type valueType)
         {
-            void InformTypeSpecificSubscribersForPath(string path, JToken valueAsJToken, Type valueType)
+            void InformTypeSpecificSubscribersForPath(string innerPath, JToken innerValueAsJToken, Type innerValueType)
             {
-                if (!_typeSpecificSubscriptions.ContainsKey(path))
+                if (!_typeSpecificSubscriptions.ContainsKey(innerPath))
                 {
                     return;
                 }
 
-                foreach (var subscriberCollectionByType in _typeSpecificSubscriptions[path])
+                foreach (KeyValuePair<Type, ISubscriptionCollection> subscriberCollectionByType in _typeSpecificSubscriptions[innerPath])
                 {
                     if (subscriberCollectionByType.Value.Count == 0)
                     {
                         continue;
                     }
-                    object attemptedCast = null;
+                    object? attemptedCast = null;
                     try
                     {
-                        attemptedCast = valueAsJToken.ToObject(subscriberCollectionByType.Key);
+                        attemptedCast = innerValueAsJToken.ToObject(subscriberCollectionByType.Key);
                     }
                     catch (Exception)
                     {
@@ -410,21 +384,21 @@ namespace DataBinding
 
                     if (attemptedCast == null)
                     {
-                        Debug.LogWarning($"{subscriberCollectionByType.Value.Count} subscribers of path '{path}' are of '{subscriberCollectionByType.Key}', but the current value cannot be cast to it, as it's of type '{valueType}'");
+                        Debug.LogWarning($"{subscriberCollectionByType.Value.Count} subscribers of path '{innerPath}' are of '{subscriberCollectionByType.Key}', but the current value cannot be cast to it, as it's of type '{innerValueType}'");
                         continue;
                     }
-                    _typeSpecificSubscriptions[path][subscriberCollectionByType.Key].CallSubscriptions(valueAsJToken.ToObject(subscriberCollectionByType.Key));
+                    _typeSpecificSubscriptions[innerPath][subscriberCollectionByType.Key].CallSubscriptions(innerValueAsJToken.ToObject(subscriberCollectionByType.Key));
                 }
             }
 
 
-            void InformTypeAgnosticSubscribersForPath(string path, JToken valueAsJToken)
+            void InformTypeAgnosticSubscribersForPath(string innerPath, JToken innerValueAsJToken)
             {
-                if (!_typeAgnosticSubscriptions.ContainsKey(path))
+                if (!_typeAgnosticSubscriptions.ContainsKey(innerPath))
                 {
                     return;
                 }
-                _typeAgnosticSubscriptions[path].CallSubscriptions(valueAsJToken);
+                _typeAgnosticSubscriptions[innerPath].CallSubscriptions(innerValueAsJToken);
             }
 
             InformTypeSpecificSubscribersForPath(path, valueAsJToken, valueType);

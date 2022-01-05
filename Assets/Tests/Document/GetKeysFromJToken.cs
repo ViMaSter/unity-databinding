@@ -1,35 +1,35 @@
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
 namespace Tests.DataBinding.Document
 {
-    class GetKeysFromJToken
+    internal class GetKeysFromJToken
     {
-
+        private readonly object _nestedValueObject = new
+        {
+            stringValue = "abc",
+            intArray = new[] {
+                1, 2, 3
+            },
+            objectArray = new object[] {
+                new {
+                    a = 1
+                },
+                new {
+                    b = 2
+                },
+                new {
+                    c = 3
+                }
+            }
+        };
         [Test]
         public void WithoutPrefix_PrintsAllPaths()
         {
-            object newValueObject = new
-            {
-                stringValue = "abc",
-                intArray = new int[] {
-                    1, 2, 3
-                },
-                objectArray = new object[] {
-                    new {
-                        a = 1
-                    },
-                    new {
-                        b = 2
-                    },
-                    new {
-                        c = 3
-                    }
-                }
-            };
-            var actual = global::DataBinding.Document.GetKeysFromJToken(JToken.FromObject(newValueObject));
-            var expected = new string[] {
+            IEnumerable<string> actual = global::DataBinding.Document.GetKeysFromJToken(JToken.FromObject(_nestedValueObject));
+            string[] expected = {
                 "stringValue",
                 "intArray",
                 "intArray[0]",
@@ -41,9 +41,8 @@ namespace Tests.DataBinding.Document
                 "objectArray[1]",
                 "objectArray[1].b",
                 "objectArray[2]",
-                "objectArray[2].c",
+                "objectArray[2].c"
             };
-            var a = 3;
             Assert.AreEqual(
                 expected.OrderBy(value => value),
                 actual.OrderBy(value => value)
@@ -54,26 +53,8 @@ namespace Tests.DataBinding.Document
         public void WithPrefix_PrintsAllPaths()
         {
             const string prefix = "object.array[4].subObject";
-            object newValueObject = new
-            {
-                stringValue = "abc",
-                intArray = new int[] {
-                    1, 2, 3
-                },
-                objectArray = new object[] {
-                    new {
-                        a = 1
-                    },
-                    new {
-                        b = 2
-                    },
-                    new {
-                        c = 3
-                    }
-                }
-            };
-            var actual = global::DataBinding.Document.GetKeysFromJToken(JToken.FromObject(newValueObject)).Select(path => $"{prefix}.{path}").ToList();
-            var expected = new string[] {
+            List<string> actual = global::DataBinding.Document.GetKeysFromJToken(JToken.FromObject(_nestedValueObject)).Select(path => $"{prefix}.{path}").ToList();
+            string[] expected = {
                 "object.array[4].subObject.stringValue",
                 "object.array[4].subObject.intArray",
                 "object.array[4].subObject.intArray[0]",
@@ -85,9 +66,8 @@ namespace Tests.DataBinding.Document
                 "object.array[4].subObject.objectArray[1]",
                 "object.array[4].subObject.objectArray[1].b",
                 "object.array[4].subObject.objectArray[2]",
-                "object.array[4].subObject.objectArray[2].c",
+                "object.array[4].subObject.objectArray[2].c"
             };
-            var a = 3;
             Assert.AreEqual(
                 expected.OrderBy(value => value),
                 actual.OrderBy(value => value)

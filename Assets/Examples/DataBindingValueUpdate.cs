@@ -1,4 +1,3 @@
-using DataBinding;
 using UnityEngine;
 
 namespace DataBinding

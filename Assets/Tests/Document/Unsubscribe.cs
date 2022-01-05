@@ -6,28 +6,28 @@ using UnityEngine.TestTools;
 
 namespace Tests.DataBinding.Document
 {
-    class Unsubscribe
+    internal class Unsubscribe
     {
         private const string DATABINDING_PATH = "path";
+        private const string CORRECT_VALUE = "C:/";
+        private const string INCORRECT_VALUE = "wrong";
         [Test]
         public void ToDirectPathAndCorrectType()
         {
             GameObject gameObject = new GameObject();
             global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            const string value = "C:/";
-
             bool called = false;
             void Callback(string path)
             {
-                called = path == value;
+                called = path == CORRECT_VALUE;
             }
 
             document.Subscribe(DATABINDING_PATH, (Action<string>)Callback);
             document.Unsubscribe(DATABINDING_PATH, (Action<string>)Callback);
-            document.Set(DATABINDING_PATH, value);
+            document.Set(DATABINDING_PATH, CORRECT_VALUE);
             Assert.IsFalse(called);
-            document.Set(DATABINDING_PATH, "wrong");
+            document.Set(DATABINDING_PATH, INCORRECT_VALUE);
             Assert.IsFalse(called);
         }
 
@@ -37,8 +37,6 @@ namespace Tests.DataBinding.Document
             GameObject gameObject = new GameObject();
             global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            const string value = "C:/";
-
             bool called = false;
             void Callback(int path)
             {
@@ -47,9 +45,9 @@ namespace Tests.DataBinding.Document
 
             document.Subscribe(DATABINDING_PATH, (Action<int>)Callback);
             document.Unsubscribe(DATABINDING_PATH, (Action<int>)Callback);
-            document.Set(DATABINDING_PATH, value);
+            document.Set(DATABINDING_PATH, CORRECT_VALUE);
             Assert.IsFalse(called);
-            document.Set(DATABINDING_PATH, "wrong");
+            document.Set(DATABINDING_PATH, INCORRECT_VALUE);
             Assert.IsFalse(called);
 
             LogAssert.NoUnexpectedReceived();
@@ -61,25 +59,24 @@ namespace Tests.DataBinding.Document
             GameObject gameObject = new GameObject();
             global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            const string value = "C:/";
-
             bool called = false;
             void Callback(JToken token)
             {
                 string path = token.ToObject<string>();
-                called = path == value;
+                called = path == CORRECT_VALUE;
             }
 
             document.Subscribe(DATABINDING_PATH, Callback);
             document.Unsubscribe(DATABINDING_PATH, Callback);
-            document.Set(DATABINDING_PATH, value);
+            document.Set(DATABINDING_PATH, CORRECT_VALUE);
             Assert.IsFalse(called);
-            document.Set(DATABINDING_PATH, "wrong");
+            document.Set(DATABINDING_PATH, INCORRECT_VALUE);
             Assert.IsFalse(called);
         }
-        class NestedValue
+
+        private class NestedValue
         {
-            public string a;
+            public string StringValue = "";
         }
         [Test]
         public void ToNestedPathAndDirectType()
@@ -87,19 +84,17 @@ namespace Tests.DataBinding.Document
             GameObject gameObject = new GameObject();
             global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            const string value = "C:/";
-
-            var called = false;
+            bool called = false;
             void Callback(NestedValue nest)
             {
-                called = nest.a == value;
+                called = nest.StringValue == CORRECT_VALUE;
             }
 
             document.Subscribe(DATABINDING_PATH, (Action<NestedValue>)Callback);
             document.Unsubscribe(DATABINDING_PATH, (Action<NestedValue>)Callback);
-            document.Set($"{DATABINDING_PATH}.a", value);
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", CORRECT_VALUE);
             Assert.IsFalse(called);
-            document.Set($"{DATABINDING_PATH}.a", "wrong");
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", INCORRECT_VALUE);
             Assert.IsFalse(called);
         }
 
@@ -109,19 +104,17 @@ namespace Tests.DataBinding.Document
             GameObject gameObject = new GameObject();
             global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            const string value = "C:/";
-
-            var called = false;
+            bool called = false;
             void Callback(string nest)
             {
-                called = nest == value;
+                called = nest == CORRECT_VALUE;
             }
 
             document.Subscribe(DATABINDING_PATH, (Action<string>)Callback);
             document.Unsubscribe(DATABINDING_PATH, (Action<string>)Callback);
-            document.Set($"{DATABINDING_PATH}.a", value);
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", CORRECT_VALUE);
             Assert.IsFalse(called);
-            document.Set($"{DATABINDING_PATH}.a", "wrong");
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", INCORRECT_VALUE);
             Assert.IsFalse(called);
 
             LogAssert.NoUnexpectedReceived();
@@ -133,20 +126,18 @@ namespace Tests.DataBinding.Document
             GameObject gameObject = new GameObject();
             global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            const string value = "C:/";
-
             bool called = false;
             void Callback(JToken token)
             {
-                var nest = token.ToObject<NestedValue>();
-                called = nest.a == value;
+                NestedValue nestedValue = token.ToObject<NestedValue>();
+                called = nestedValue!.StringValue == CORRECT_VALUE;
             }
 
             document.Subscribe(DATABINDING_PATH, Callback);
             document.Unsubscribe(DATABINDING_PATH, Callback);
-            document.Set($"{DATABINDING_PATH}.a", value);
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", CORRECT_VALUE);
             Assert.IsFalse(called);
-            document.Set($"{DATABINDING_PATH}.a", "wrong");
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", INCORRECT_VALUE);
             Assert.IsFalse(called);
         }
     }

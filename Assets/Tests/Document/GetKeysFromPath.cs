@@ -1,16 +1,17 @@
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
 namespace Tests.DataBinding.Document
 {
-    class GetKeysFromPath
+    internal class GetKeysFromPath
     {
         [Test]
         public void PrintsAllPaths()
         {
             const string path = "object.array[4].subObject";
-            var actual = global::DataBinding.Document.GetKeysFromPath(path);
-            var expected = new string[] {
+            IEnumerable<string> actual = global::DataBinding.Document.GetKeysFromPath(path);
+            string[] expected = {
                 "object",
                 "object.array",
                 "object.array[4]",

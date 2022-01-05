@@ -17,7 +17,7 @@ namespace DataBinding
         [SerializeField]private string _keyRoot;
         [SerializeField]private Component _targetObject;
         private readonly List<Tuple<string, Action<JToken>>> _activeSubscriptions = new List<Tuple<string, Action<JToken>>>();
-        private readonly List<Type> supportedTypes = new List<Type>() { typeof(string), typeof(Vector2), typeof(Vector3), typeof(Rect)};
+        private readonly List<Type> _supportedTypes = new List<Type> { typeof(string), typeof(Vector2), typeof(Vector3), typeof(Rect)};
 
         public void UpdatePrefabKey(Document document, string path)
         {
@@ -36,43 +36,43 @@ namespace DataBinding
             // and subscribe to their respective keys of the _document
 
             // fields that are public
-            var publicFields = _targetObject.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public).Where(a => a.FieldType.IsPrimitive || a.FieldType == typeof(string)).ToList();
-            foreach (var field in publicFields)
+            List<FieldInfo> publicFields = _targetObject.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public).Where(a => a.FieldType.IsPrimitive || a.FieldType == typeof(string)).ToList();
+            foreach (FieldInfo field in publicFields)
             {
-                var absoluteKey = $"{_keyRoot}.{field.Name}";
-                _activeSubscriptions.Add(new Tuple<string, Action<JToken>>($"{_keyRoot}.{field.Name}", _document.Subscribe(absoluteKey, (token) => {
+                string absoluteKey = $"{_keyRoot}.{field.Name}";
+                _activeSubscriptions.Add(new Tuple<string, Action<JToken>>($"{_keyRoot}.{field.Name}", _document.Subscribe(absoluteKey, token => {
                     field.SetValue(_targetObject, token.ToObject(field.FieldType));
                 })));
             }
 
             // special edge-case for Unity-internal Behaviors that exist only in native code
-            var externalProperties = _targetObject.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(prop => prop.CanWrite).Where(prop => publicFields.All(field => !field.Name.Contains(prop.Name))).Where(a => a.PropertyType.IsPrimitive || supportedTypes.Contains(a.PropertyType)).Where(a => a.DeclaringType == a.ReflectedType).ToList();
-            foreach (var property in externalProperties)
+            List<PropertyInfo> externalProperties = _targetObject.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(prop => prop.CanWrite).Where(prop => publicFields.All(field => !field.Name.Contains(prop.Name))).Where(a => a.PropertyType.IsPrimitive || _supportedTypes.Contains(a.PropertyType)).Where(a => a.DeclaringType == a.ReflectedType).ToList();
+            foreach (PropertyInfo property in externalProperties)
             {
-                var absoluteKey = $"{_keyRoot}.{property.Name}";
-                _activeSubscriptions.Add(new Tuple<string, Action<JToken>>(absoluteKey, _document.Subscribe(absoluteKey, (token) => {
+                string absoluteKey = $"{_keyRoot}.{property.Name}";
+                _activeSubscriptions.Add(new Tuple<string, Action<JToken>>(absoluteKey, _document.Subscribe(absoluteKey, token => {
                     property.SetValue(_targetObject, token.ToObject(property.PropertyType));
                 })));
             }
 
-            var privateFieldsWithSerializeFieldAttribute = _targetObject.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(a => a.GetCustomAttributes().Any(attr => attr is SerializeField)).Where(a => a.FieldType.IsPrimitive || supportedTypes.Contains(a.FieldType)).ToList();
+            List<FieldInfo> privateFieldsWithSerializeFieldAttribute = _targetObject.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(a => a.GetCustomAttributes().Any(attr => attr is SerializeField)).Where(a => a.FieldType.IsPrimitive || _supportedTypes.Contains(a.FieldType)).ToList();
 
             // fields that are private but have the [SerializeField] attribute
-            var privateFieldsWithSerializeFieldAttributeWithoutBackingFields = privateFieldsWithSerializeFieldAttribute.Where(a => !a.Name.Contains("k__BackingField")).ToList();
-            foreach (var field in privateFieldsWithSerializeFieldAttributeWithoutBackingFields)
+            List<FieldInfo> privateFieldsWithSerializeFieldAttributeWithoutBackingFields = privateFieldsWithSerializeFieldAttribute.Where(a => !a.Name.Contains("k__BackingField")).ToList();
+            foreach (FieldInfo field in privateFieldsWithSerializeFieldAttributeWithoutBackingFields)
             {
-                var absoluteKey = $"{_keyRoot}.{field.Name}";
-                _activeSubscriptions.Add(new Tuple<string, Action<JToken>>($"{_keyRoot}.{field.Name}", _document.Subscribe(absoluteKey, (token) => {
+                string absoluteKey = $"{_keyRoot}.{field.Name}";
+                _activeSubscriptions.Add(new Tuple<string, Action<JToken>>($"{_keyRoot}.{field.Name}", _document.Subscribe(absoluteKey, token => {
                     field.SetValue(_targetObject, token.ToObject(field.FieldType));
                 })));
             }
 
             // properties that are private but have the [SerializeField] attribute
-            var privatePropertiesWithSerializeFieldAttribute = privateFieldsWithSerializeFieldAttribute.Where(a => a.Name.Contains("k__BackingField")).Select(a => _targetObject.GetType().GetProperty(a.Name.Substring(1, a.Name.Length - 17), BindingFlags.NonPublic | BindingFlags.Instance)).ToList();
-            foreach (var property in privatePropertiesWithSerializeFieldAttribute)
+            List<PropertyInfo> privatePropertiesWithSerializeFieldAttribute = privateFieldsWithSerializeFieldAttribute.Where(a => a.Name.Contains("k__BackingField")).Select(a => _targetObject.GetType().GetProperty(a.Name.Substring(1, a.Name.Length - 17), BindingFlags.NonPublic | BindingFlags.Instance)).ToList();
+            foreach (PropertyInfo property in privatePropertiesWithSerializeFieldAttribute)
             {
-                var absoluteKey = $"{_keyRoot}.{property.Name}";
-                _activeSubscriptions.Add(new Tuple<string, Action<JToken>>(absoluteKey, _document.Subscribe(absoluteKey, (token) => {
+                string absoluteKey = $"{_keyRoot}.{property.Name}";
+                _activeSubscriptions.Add(new Tuple<string, Action<JToken>>(absoluteKey, _document.Subscribe(absoluteKey, token => {
                     property.SetValue(_targetObject, token.ToObject(property.PropertyType));
                 })));
             }

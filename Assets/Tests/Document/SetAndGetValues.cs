@@ -1,7 +1,7 @@
-using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using NUnit.Framework;
 using UnityEngine;
 
 namespace Tests.DataBinding
@@ -12,11 +12,13 @@ namespace Tests.DataBinding
         {
             public class TestValue
             {
+                // ReSharper disable UnusedMember.Global
                 public float FloatValue = 1.0f;
                 public int IntValue = 1;
                 public string StringValue = "1.0";
                 public object[] ArrayValue = { 1.0f, 1, "1.0" };
                 public object ObjectValue = new { primitiveValueA = 1.0f, primitiveValueB = 1, primitiveValueC = "1.0" };
+                // ReSharper restore UnusedMember.Global
                 public TestValue SelfValue;
                 public TestValue(TestValue selfValue)
                 {
@@ -40,7 +42,7 @@ namespace Tests.DataBinding
             private static readonly IEnumerable<object> Values = PrimitiveValues
                 .Concat(PrimitiveValues.Select(primitiveValue => new[] { primitiveValue, primitiveValue, primitiveValue }))
                 .Concat(PrimitiveValues.Select(primitiveValue => new { primitiveValueA = primitiveValue, primitiveValueB = primitiveValue, primitiveValueC = primitiveValue }));
-            private static readonly IEnumerable<object[]> TestCaseSource = Paths.SelectMany(path => Values.Select(value => new object[] { path, value }));
+            private static readonly IEnumerable<object[]> TestCaseSource = Paths.SelectMany(path => Values.Select(value => new[] { path, value }));
 
             [Test]
             [TestCaseSource(nameof(TestCaseSource))]

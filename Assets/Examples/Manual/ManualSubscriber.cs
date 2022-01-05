@@ -20,7 +20,7 @@ namespace DataBinding.Examples
 
         public void OnChange(JToken value)
         {
-            Vector2 position = new Vector2(value["anchoredPosition"]["x"].ToObject<float>(), value["anchoredPosition"]["y"].ToObject<float>());
+            Vector2 position = new Vector2(value["anchoredPosition"]!["x"]!.ToObject<float>(), value["anchoredPosition"]!["y"]!.ToObject<float>());
             _textElementTransform.anchoredPosition = position;
         }
     }

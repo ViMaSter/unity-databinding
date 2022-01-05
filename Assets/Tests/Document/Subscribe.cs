@@ -77,7 +77,7 @@ namespace Tests.DataBinding.Document.Subscribe
 
         private class NestedValue
         {
-            public string stringValue;
+            public string StringValue = "";
         }
         [Test]
         public void ToNestedPathAndDirectType()
@@ -85,16 +85,16 @@ namespace Tests.DataBinding.Document.Subscribe
             GameObject gameObject = new GameObject();
             global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            var called = false;
+            bool called = false;
             void Callback(NestedValue nest)
             {
-                called = nest.stringValue == CORRECT_VALUE;
+                called = nest.StringValue == CORRECT_VALUE;
             }
 
             document.Subscribe(DATABINDING_PATH, (Action<NestedValue>)Callback);
-            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.stringValue)}", CORRECT_VALUE);
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", CORRECT_VALUE);
             Assert.IsTrue(called);
-            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.stringValue)}", INCORRECT_VALUE);
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", INCORRECT_VALUE);
             Assert.IsFalse(called);
         }
 
@@ -104,7 +104,7 @@ namespace Tests.DataBinding.Document.Subscribe
             GameObject gameObject = new GameObject();
             global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            var called = false;
+            bool called = false;
             void Callback(string nest)
             {
                 called = nest == CORRECT_VALUE;
@@ -112,10 +112,10 @@ namespace Tests.DataBinding.Document.Subscribe
 
             document.Subscribe(DATABINDING_PATH, (Action<string>)Callback);
             LogAssert.Expect(LogType.Warning, $"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(string)}', but the current value cannot be cast to it, as it's of type '{typeof(JObject)}'");
-            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.stringValue)}", CORRECT_VALUE);
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", CORRECT_VALUE);
             Assert.IsFalse(called);
             LogAssert.Expect(LogType.Warning, $"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(string)}', but the current value cannot be cast to it, as it's of type '{typeof(JObject)}'");
-            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.stringValue)}", INCORRECT_VALUE);
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", INCORRECT_VALUE);
             Assert.IsFalse(called);
 
             LogAssert.NoUnexpectedReceived();
@@ -130,14 +130,14 @@ namespace Tests.DataBinding.Document.Subscribe
             bool called = false;
             void Callback(JToken token)
             {
-                var nest = token.ToObject<NestedValue>();
-                called = nest.stringValue == CORRECT_VALUE;
+                NestedValue nestedValue = token.ToObject<NestedValue>();
+                called = nestedValue!.StringValue == CORRECT_VALUE;
             }
 
             document.Subscribe(DATABINDING_PATH, Callback);
-            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.stringValue)}", CORRECT_VALUE);
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", CORRECT_VALUE);
             Assert.IsTrue(called);
-            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.stringValue)}", INCORRECT_VALUE);
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", INCORRECT_VALUE);
             Assert.IsFalse(called);
         }
     }
@@ -212,7 +212,7 @@ namespace Tests.DataBinding.Document.Subscribe
 
         private class NestedValue
         {
-            public string a;
+            public string StringValue = "";
         }
         [Test]
         public void ToNestedPathAndDirectType()
@@ -220,16 +220,16 @@ namespace Tests.DataBinding.Document.Subscribe
             GameObject gameObject = new GameObject();
             global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            var called = false;
+            bool called = false;
             void Callback(NestedValue nest)
             {
-                called = nest.a == CORRECT_VALUE;
+                called = nest.StringValue == CORRECT_VALUE;
             }
 
             document.Subscribe(DATABINDING_PATH, (Action<NestedValue>)Callback);
-            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.a)}", CORRECT_VALUE);
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", CORRECT_VALUE);
             Assert.IsTrue(called);
-            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.a)}", INCORRECT_VALUE);
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", INCORRECT_VALUE);
             Assert.IsFalse(called);
         }
 
@@ -239,7 +239,7 @@ namespace Tests.DataBinding.Document.Subscribe
             GameObject gameObject = new GameObject();
             global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            var called = false;
+            bool called = false;
             void Callback(string nest)
             {
                 called = nest == CORRECT_VALUE;
@@ -247,10 +247,10 @@ namespace Tests.DataBinding.Document.Subscribe
 
             document.Subscribe(DATABINDING_PATH, (Action<string>)Callback);
             LogAssert.Expect(LogType.Warning, $"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(string)}', but the current value cannot be cast to it, as it's of type '{typeof(JObject)}'");
-            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.a)}", CORRECT_VALUE);
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", CORRECT_VALUE);
             Assert.IsFalse(called);
             LogAssert.Expect(LogType.Warning, $"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(string)}', but the current value cannot be cast to it, as it's of type '{typeof(JObject)}'");
-            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.a)}", INCORRECT_VALUE);
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", INCORRECT_VALUE);
             Assert.IsFalse(called);
 
             LogAssert.NoUnexpectedReceived();
@@ -265,14 +265,14 @@ namespace Tests.DataBinding.Document.Subscribe
             bool called = false;
             void Callback(JToken token)
             {
-                var nest = token.ToObject<NestedValue>();
-                called = nest.a == CORRECT_VALUE;
+                NestedValue nestedValue = token.ToObject<NestedValue>();
+                called = nestedValue!.StringValue == CORRECT_VALUE;
             }
 
             document.Subscribe(DATABINDING_PATH, Callback);
-            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.a)}", CORRECT_VALUE);
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", CORRECT_VALUE);
             Assert.IsTrue(called);
-            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.a)}", INCORRECT_VALUE);
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", INCORRECT_VALUE);
             Assert.IsFalse(called);
         }
 
@@ -342,16 +342,16 @@ namespace Tests.DataBinding.Document.Subscribe
             GameObject gameObject = new GameObject();
             global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            var called = false;
+            bool called = false;
             void Callback(NestedValue nest)
             {
-                called = nest.a == CORRECT_VALUE;
+                called = nest.StringValue == CORRECT_VALUE;
             }
 
-            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.a)}", CORRECT_VALUE);
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", CORRECT_VALUE);
             document.Subscribe(DATABINDING_PATH, (Action<NestedValue>)Callback);
             Assert.IsTrue(called);
-            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.a)}", INCORRECT_VALUE);
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", INCORRECT_VALUE);
             Assert.IsFalse(called);
         }
 
@@ -361,17 +361,17 @@ namespace Tests.DataBinding.Document.Subscribe
             GameObject gameObject = new GameObject();
             global::DataBinding.Document document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            var called = false;
+            bool called = false;
             void Callback(string nest)
             {
                 called = nest == CORRECT_VALUE;
             }
 
-            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.a)}", CORRECT_VALUE);
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", CORRECT_VALUE);
             document.Subscribe(DATABINDING_PATH, (Action<string>)Callback);
             Assert.IsFalse(called);
             LogAssert.Expect(LogType.Warning, $"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(string)}', but the current value cannot be cast to it, as it's of type '{typeof(JObject)}'");
-            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.a)}", INCORRECT_VALUE);
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", INCORRECT_VALUE);
             Assert.IsFalse(called);
 
             LogAssert.NoUnexpectedReceived();
@@ -386,14 +386,14 @@ namespace Tests.DataBinding.Document.Subscribe
             bool called = false;
             void Callback(JToken token)
             {
-                var nest = token.ToObject<NestedValue>();
-                called = nest.a == CORRECT_VALUE;
+                NestedValue nestedValue = token.ToObject<NestedValue>();
+                called = nestedValue!.StringValue == CORRECT_VALUE;
             }
 
-            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.a)}", CORRECT_VALUE);
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", CORRECT_VALUE);
             document.Subscribe(DATABINDING_PATH, Callback);
             Assert.IsTrue(called);
-            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.a)}", INCORRECT_VALUE);
+            document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", INCORRECT_VALUE);
             Assert.IsFalse(called);
         }
     }
