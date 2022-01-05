@@ -375,8 +375,9 @@ namespace DataBinding
                     {
                         attemptedCast = valueAsJToken.ToObject(subscriberCollectionByType.Key);
                     }
-                    catch (ArgumentException)
+                    catch (Exception)
                     {
+                        // any exception during object conversion is acceptable, so we need to suppress them to continue execution
                     }
 
                     if (attemptedCast == null)
