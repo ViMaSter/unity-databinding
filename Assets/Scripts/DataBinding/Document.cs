@@ -68,10 +68,28 @@ namespace DataBinding
             }
 
             ((SubscriptionCollection<T>)_typeSpecificSubscriptions[path][typeof(T)]).Add(action);
+
             var currentValue = _documentRoot.SelectToken(path, false);
-            if (currentValue != null)
+            if (currentValue == null)
             {
-                action(currentValue.ToObject<T>());
+                return action;
+            }
+
+            T attemptedCast = default;
+            bool successfulCast = false;
+            try
+            {
+                attemptedCast = currentValue.ToObject<T>();
+                successfulCast = true;
+            }
+            catch (Exception)
+            {
+                // any exception during object conversion is acceptable, so we need to suppress them to continue execution
+            }
+
+            if (successfulCast)
+            {
+                action(attemptedCast);
             }
 
             return action;
