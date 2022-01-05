@@ -57,7 +57,6 @@ namespace DataBinding
         /// <returns>The <see cref="action"/> parameter</returns>
         public Action<T> Subscribe<T>(string path, Action<T> action)
         {
-            Debug.Log($"Subscribed to '{path}'");
             if (!_typeSpecificSubscriptions.ContainsKey(path))
             {
                 _typeSpecificSubscriptions[path] = new Dictionary<Type, ISubscriptionCollection>();
@@ -85,7 +84,6 @@ namespace DataBinding
         /// <returns>The <see cref="action"/> parameter</returns>
         public Action<JToken> Subscribe(string path, Action<JToken> action)
         {
-            Debug.Log($"Subscribed to '{path}'");
             if (!_typeAgnosticSubscriptions.ContainsKey(path))
             {
                 _typeAgnosticSubscriptions[path] = new SubscriptionCollection<JToken>();
@@ -248,6 +246,7 @@ namespace DataBinding
             JToken valueAsJToken = JToken.FromObject(value);
             var splitPath = path.Split('.').ToList();
             var currentPath = "";
+            List<(string parentPath, Type valueType)> parentUpdates = new List<(string parentPath, Type valueType)>();
             foreach (string keyInPath in splitPath)
             {
                 int arraySize = 0;
@@ -279,11 +278,13 @@ namespace DataBinding
 
                 if (arraySize == 0 && tokenAtPath.Type == JTokenType.Object)
                 {
+                    parentUpdates.Add((currentPath, typeof(JObject)));
                     currentPath += ".";
                     continue;
                 }
                 if (arraySize != 0 && tokenAtPath.Type == JTokenType.Array)
                 {
+                    parentUpdates.Add((currentPath, typeof(JArray)));
                     currentPath += ".";
                     continue;
                 }
@@ -295,10 +296,17 @@ namespace DataBinding
                 throw new NotSupportedException($"'{tokenAtPath.Path}' is of type '{tokenAtPath.Type}' not of '{JTokenType.Object}'; setting '{tokenAtPath.Path}' would replace this value to an object implicitly. Either overwrite '{tokenAtPath.Path}' directly or delete it first.");
             }
 
+            parentUpdates = parentUpdates.Where(parentUpdate => parentUpdate.parentPath != path).ToList();
+
             var tokenOfPathInDocument = _documentRoot.SelectToken(path);
             tokenOfPathInDocument.Replace(valueAsJToken);
 
-            InformSubscribersForPath<T>(path, valueAsJToken);
+            foreach (var (parentPath, valueType) in parentUpdates)
+            {
+                InformSubscribersForPath(parentPath, _documentRoot.SelectToken(parentPath), valueType);
+            }
+
+            InformSubscribersForPath(path, valueAsJToken, typeof(T));
         }
 
         /// <summary>
@@ -331,43 +339,67 @@ namespace DataBinding
                 subscriptionPathsToInform = GetKeysFromJToken(valueAsJToken).Concat(GetKeysFromPath(path));
             }
 
-            var subscriptionsToInform = _typeSpecificSubscriptions.Where(keyValue => subscriptionPathsToInform.Contains(keyValue.Key));
-            foreach (KeyValuePair<string, Dictionary<Type, ISubscriptionCollection>> typeSpecificSubscribersByPath in subscriptionsToInform)
+            var typeSpecificSubscribersToInform = _typeSpecificSubscriptions.Where(keyValue => subscriptionPathsToInform.Contains(keyValue.Key));
+            foreach (KeyValuePair<string, Dictionary<Type, ISubscriptionCollection>> typeSpecificSubscribersByPath in typeSpecificSubscribersToInform)
             {
                 foreach (KeyValuePair<Type, ISubscriptionCollection> keyValuePair in typeSpecificSubscribersByPath.Value)
                 {
                     keyValuePair.Value.CallSubscriptions(null);
                 }
             }
+
+            var typeAgnosticSubscribersToInform = _typeAgnosticSubscriptions.Where(keyValue => subscriptionPathsToInform.Contains(keyValue.Key));
+            foreach (var keyValuePair in typeAgnosticSubscribersToInform)
+            {
+                keyValuePair.Value.CallSubscriptions(null);
+            }
         }
 
-        private void InformSubscribersForPath<T>(string path, JToken valueAsJToken)
+        private void InformSubscribersForPath(string path, JToken valueAsJToken, Type valueType)
         {
-            IEnumerable<string> subscriptionPathsToInform = new []{path};
-            if (valueAsJToken != null)
+            void InformTypeSpecificSubscribersForPath(string path, JToken valueAsJToken, Type valueType)
             {
-                subscriptionPathsToInform = GetKeysFromJToken(valueAsJToken).Concat(GetKeysFromPath(path));
-            }
-            Debug.Log($"Attempting to inform about change of '{path}' to '{valueAsJToken}'\r\nPaths informed: '{string.Join("','", subscriptionPathsToInform)}'");
-
-            var subscriptionsToInform = _typeSpecificSubscriptions.Where(keyValue => subscriptionPathsToInform.Contains(keyValue.Key));
-            foreach (KeyValuePair<string, Dictionary<Type, ISubscriptionCollection>> typeSpecificSubscribersByPath in subscriptionsToInform)
-            {
-                var nameAndCountOfMismatchedSubscribers = typeSpecificSubscribersByPath.Value.Where(type => type.Key != typeof(T))
-                    .Select(type => (type.Key.Name, type.Value.Count));
-                foreach ((string typeName, int count) in nameAndCountOfMismatchedSubscribers)
+                if (!_typeSpecificSubscriptions.ContainsKey(path))
                 {
-                    Debug.LogWarning($"{count} subscribers of path '{typeSpecificSubscribersByPath.Key}' are of '{typeName}', but the current value is of type '{typeof(T).Name}'");
+                    return;
+                }
+
+                foreach (var subscriberCollectionByType in _typeSpecificSubscriptions[path])
+                {
+                    if (subscriberCollectionByType.Value.Count == 0)
+                    {
+                        continue;
+                    }
+                    object attemptedCast = null;
+                    try
+                    {
+                        attemptedCast = valueAsJToken.ToObject(subscriberCollectionByType.Key);
+                    }
+                    catch (ArgumentException)
+                    {
+                    }
+
+                    if (attemptedCast == null)
+                    {
+                        Debug.LogWarning($"{subscriberCollectionByType.Value.Count} subscribers of path '{path}' are of '{subscriberCollectionByType.Key}', but the current value cannot be cast to it, as it's of type '{valueType}'");
+                        continue;
+                    }
+                    _typeSpecificSubscriptions[path][subscriberCollectionByType.Key].CallSubscriptions(valueAsJToken.ToObject(subscriberCollectionByType.Key));
                 }
             }
 
-            if (_typeSpecificSubscriptions.ContainsKey(path))
+
+            void InformTypeAgnosticSubscribersForPath(string path, JToken valueAsJToken)
             {
-                if (_typeSpecificSubscriptions[path].ContainsKey(typeof(T)))
+                if (!_typeAgnosticSubscriptions.ContainsKey(path))
                 {
-                    _typeSpecificSubscriptions[path][typeof(T)].CallSubscriptions(valueAsJToken.ToObject<T>());
+                    return;
                 }
+                _typeAgnosticSubscriptions[path].CallSubscriptions(valueAsJToken);
             }
+
+            InformTypeSpecificSubscribersForPath(path, valueAsJToken, valueType);
+            InformTypeAgnosticSubscribersForPath(path, valueAsJToken);
         }
 
         /// <summary>
@@ -378,13 +410,28 @@ namespace DataBinding
         /// <returns>True, if the action was previously subscribe and has been successfully removed. False, if the action was never subscribed to this path.</returns>
         public bool Unsubscribe<T>(string path, Action<T> action)
         {
-            Debug.Log($"Attempting to unsubscribe from '{path}'");
             if (!_typeSpecificSubscriptions.ContainsKey(path))
             {
                 return false;
             }
 
             return ((SubscriptionCollection<T>)_typeSpecificSubscriptions[path][typeof(T)]).Remove(action);
+        }
+
+        /// <summary>
+        /// Attempts to unsubscribe a specific action from a data binding path
+        /// </summary>
+        /// <param name="path">Absolute data binding path</param>
+        /// <param name="action">Specific action to remove</param>
+        /// <returns>True, if the action was previously subscribe and has been successfully removed. False, if the action was never subscribed to this path.</returns>
+        public bool Unsubscribe(string path, Action<JToken> action)
+        {
+            if (!_typeAgnosticSubscriptions.ContainsKey(path))
+            {
+                return false;
+            }
+
+            return _typeAgnosticSubscriptions[path].Remove(action);
         }
     }
 }
