@@ -6,7 +6,7 @@ namespace DataBinding
     [RequireComponent(typeof(Document))]
     public class DocumentDebugger : MonoBehaviour
     {
-        private bool _isShown;
+        [SerializeField] private bool _isShown;
         private Document _document;
         [SerializeField] private UnityEngine.UI.Text _text;
 

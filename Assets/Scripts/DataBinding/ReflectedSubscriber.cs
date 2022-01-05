@@ -19,7 +19,14 @@ namespace DataBinding
         private readonly List<Tuple<string, Action<JToken>>> _activeSubscriptions = new List<Tuple<string, Action<JToken>>>();
         private readonly List<Type> supportedTypes = new List<Type>() { typeof(string), typeof(Vector2), typeof(Vector3), typeof(Rect)};
 
-        public void OnEnable()
+        public void UpdatePrefabKey(Document document, string path)
+        {
+            Debug.Assert(_keyRoot.Contains("$0"), "_keyRoot cannot be updated, as it contains no relative qualifier '$0'");
+            _document = document;
+            _keyRoot = _keyRoot.Replace("$0", path);
+        }
+
+        public void Start()
         {
             Debug.Assert(_document != null, "Reflected subscriber has no document set and thereby cannot subscribe to data binding");
             Debug.Assert(!string.IsNullOrEmpty(_keyRoot), "Reflected subscriber cannot have an empty string as key root");

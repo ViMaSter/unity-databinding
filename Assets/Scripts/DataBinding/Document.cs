@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace DataBinding
 {
-    [DefaultExecutionOrder(-102)]
+    [DefaultExecutionOrder(-110)]
     public class Document : MonoBehaviour
     {
         private interface ISubscriptionCollection
@@ -68,6 +68,11 @@ namespace DataBinding
             }
 
             ((SubscriptionCollection<T>)_typeSpecificSubscriptions[path][typeof(T)]).Add(action);
+            var currentValue = _documentRoot.SelectToken(path, false);
+            if (currentValue != null)
+            {
+                action(currentValue.ToObject<T>());
+            }
 
             return action;
         }
@@ -90,6 +95,11 @@ namespace DataBinding
             }
 
             _typeAgnosticSubscriptions[path].Add(action);
+            var currentValue = _documentRoot.SelectToken(path, false);
+            if (currentValue != null)
+            {
+                action(currentValue);
+            }
 
             return action;
         }
@@ -276,13 +286,13 @@ namespace DataBinding
                     tokenAtPath = _documentRoot.SelectToken(string.Join(".", list.Append(currentKey)));
                 }
 
-                if (arraySize == 0 && tokenAtPath.Type == JTokenType.Object)
+                if (tokenAtPath.Type == JTokenType.Object)
                 {
                     parentUpdates.Add((currentPath, typeof(JObject)));
                     currentPath += ".";
                     continue;
                 }
-                if (arraySize != 0 && tokenAtPath.Type == JTokenType.Array)
+                if (tokenAtPath.Type == JTokenType.Array)
                 {
                     parentUpdates.Add((currentPath, typeof(JArray)));
                     currentPath += ".";
@@ -293,7 +303,7 @@ namespace DataBinding
                 {
                     continue;
                 }
-                throw new NotSupportedException($"'{tokenAtPath.Path}' is of type '{tokenAtPath.Type}' not of '{JTokenType.Object}'; setting '{tokenAtPath.Path}' would replace this value to an object implicitly. Either overwrite '{tokenAtPath.Path}' directly or delete it first.");
+                throw new NotSupportedException($"'{tokenAtPath.Path}' is of type '{tokenAtPath.Type}' not of '{valueAsJToken.Type}'; setting '{tokenAtPath.Path}' would replace this value to a different type implicitly. To change types, delete this value first.");
             }
 
             parentUpdates = parentUpdates.Where(parentUpdate => parentUpdate.parentPath != path).ToList();
