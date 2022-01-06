@@ -80,7 +80,7 @@ namespace DataBinding
 
         private void OnDisable()
         {
-            foreach ((var key, var callback) in _activeSubscriptions)
+            foreach (var (key, callback) in _activeSubscriptions)
             {
                 _document.Unsubscribe(key, callback);
             }

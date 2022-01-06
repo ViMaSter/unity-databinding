@@ -25,7 +25,7 @@ namespace Tests.DataBinding.Document.Unsubscribe
             var gameObject = new GameObject();
             var document = gameObject.AddComponent<global::DataBinding.Document>();
 
-            Assert.False(document.Unsubscribe(DATABINDING_PATH, (path => { })));
+            Assert.False(document.Unsubscribe(DATABINDING_PATH, path => { }));
         }
     }
 
