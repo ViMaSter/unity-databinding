@@ -432,9 +432,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f09cdd1cfdfc7bb4cb8970b7756297dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _document: {fileID: 447077075}
-  _keyRoot: $0
-  _targetObject: {fileID: 1291327306}
+  Document: {fileID: 0}
+  KeyRoot: 
+  TargetComponent: {fileID: 0}
 --- !u!114 &1291327306
 MonoBehaviour:
   m_ObjectHideFlags: 0

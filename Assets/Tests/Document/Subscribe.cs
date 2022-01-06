@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using UnityEngine;
@@ -44,10 +47,10 @@ namespace Tests.DataBinding.Document.Subscribe
             }
 
             document.Subscribe(DATABINDING_PATH, (Action<int>)Callback);
-            LogAssert.Expect(LogType.Warning, $"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(int)}', but the current value cannot be cast to it, as it's of type '{typeof(string)}'");
+            LogAssert.Expect(LogType.Warning, new Regex($"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(int)}',", RegexOptions.Singleline));
             document.Set(DATABINDING_PATH, CORRECT_VALUE);
             Assert.IsFalse(called);
-            LogAssert.Expect(LogType.Warning, $"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(int)}', but the current value cannot be cast to it, as it's of type '{typeof(string)}'");
+            LogAssert.Expect(LogType.Warning, new Regex($"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(int)}',", RegexOptions.Singleline));
             document.Set(DATABINDING_PATH, INCORRECT_VALUE);
             Assert.IsFalse(called);
 
@@ -110,10 +113,10 @@ namespace Tests.DataBinding.Document.Subscribe
             }
 
             document.Subscribe(DATABINDING_PATH, (Action<string>)Callback);
-            LogAssert.Expect(LogType.Warning, $"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(string)}', but the current value cannot be cast to it, as it's of type '{typeof(JObject)}'");
+            LogAssert.Expect(LogType.Warning, new Regex($"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(string)}',", RegexOptions.Singleline));
             document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", CORRECT_VALUE);
             Assert.IsFalse(called);
-            LogAssert.Expect(LogType.Warning, $"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(string)}', but the current value cannot be cast to it, as it's of type '{typeof(JObject)}'");
+            LogAssert.Expect(LogType.Warning, new Regex($"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(string)}',", RegexOptions.Singleline));
             document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", INCORRECT_VALUE);
             Assert.IsFalse(called);
 
@@ -179,10 +182,10 @@ namespace Tests.DataBinding.Document.Subscribe
             }
 
             document.Subscribe(DATABINDING_PATH, (Action<int>)Callback);
-            LogAssert.Expect(LogType.Warning, $"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(int)}', but the current value cannot be cast to it, as it's of type '{typeof(string)}'");
+            LogAssert.Expect(LogType.Warning, new Regex($"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(int)}',", RegexOptions.Singleline));
             document.Set(DATABINDING_PATH, CORRECT_VALUE);
             Assert.IsFalse(called);
-            LogAssert.Expect(LogType.Warning, $"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(int)}', but the current value cannot be cast to it, as it's of type '{typeof(string)}'");
+            LogAssert.Expect(LogType.Warning, new Regex($"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(int)}',", RegexOptions.Singleline));
             document.Set(DATABINDING_PATH, INCORRECT_VALUE);
             Assert.IsFalse(called);
 
@@ -244,11 +247,11 @@ namespace Tests.DataBinding.Document.Subscribe
                 called = nest == CORRECT_VALUE;
             }
 
-            document.Subscribe(DATABINDING_PATH, (Action<string>)Callback);
-            LogAssert.Expect(LogType.Warning, $"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(string)}', but the current value cannot be cast to it, as it's of type '{typeof(JObject)}'");
+            document.Subscribe($"{DATABINDING_PATH}", (Action<string>)Callback);
+            LogAssert.Expect(LogType.Warning, new Regex($"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(string)}',", RegexOptions.Singleline));
             document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", CORRECT_VALUE);
             Assert.IsFalse(called);
-            LogAssert.Expect(LogType.Warning, $"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(string)}', but the current value cannot be cast to it, as it's of type '{typeof(JObject)}'");
+            LogAssert.Expect(LogType.Warning, new Regex($"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(string)}',", RegexOptions.Singleline));
             document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", INCORRECT_VALUE);
             Assert.IsFalse(called);
 
@@ -268,7 +271,7 @@ namespace Tests.DataBinding.Document.Subscribe
                 called = nestedValue!.StringValue == CORRECT_VALUE;
             }
 
-            document.Subscribe(DATABINDING_PATH, Callback);
+            document.Subscribe($"{DATABINDING_PATH}", Callback);
             document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", CORRECT_VALUE);
             Assert.IsTrue(called);
             document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", INCORRECT_VALUE);
@@ -309,7 +312,7 @@ namespace Tests.DataBinding.Document.Subscribe
             document.Set(DATABINDING_PATH, CORRECT_VALUE);
             document.Subscribe(DATABINDING_PATH, (Action<int>)Callback);
             Assert.IsFalse(called);
-            LogAssert.Expect(LogType.Warning, $"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(int)}', but the current value cannot be cast to it, as it's of type '{typeof(string)}'");
+            LogAssert.Expect(LogType.Warning, new Regex($"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(int)}',", RegexOptions.Singleline));
             document.Set(DATABINDING_PATH, INCORRECT_VALUE);
             Assert.IsFalse(called);
 
@@ -369,7 +372,7 @@ namespace Tests.DataBinding.Document.Subscribe
             document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", CORRECT_VALUE);
             document.Subscribe(DATABINDING_PATH, (Action<string>)Callback);
             Assert.IsFalse(called);
-            LogAssert.Expect(LogType.Warning, $"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(string)}', but the current value cannot be cast to it, as it's of type '{typeof(JObject)}'");
+            LogAssert.Expect(LogType.Warning, new Regex($"1 subscribers of path '{DATABINDING_PATH}' are of '{typeof(string)}',", RegexOptions.Singleline));
             document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", INCORRECT_VALUE);
             Assert.IsFalse(called);
 
@@ -394,6 +397,37 @@ namespace Tests.DataBinding.Document.Subscribe
             Assert.IsTrue(called);
             document.Set($"{DATABINDING_PATH}.{nameof(NestedValue.StringValue)}", INCORRECT_VALUE);
             Assert.IsFalse(called);
+        }
+    }
+
+    public class Arrays
+    {
+        private const string DATABINDING_PATH = "path";
+
+        [Test]
+        public void SettingArrayInformsAllChildSubscriber()
+        {
+            var gameObject = new GameObject();
+            var document = gameObject.AddComponent<global::DataBinding.Document>();
+
+            List<int> calledIndices = new List<int>();
+
+            Action<JToken> GenerateCallbackForIndex(int index)
+            {
+                return token => {
+                    Assert.AreEqual(index, token.ToObject<int>());
+                    calledIndices.Add(index);
+                };
+            }
+
+            var intArray = new[] { 0, 1, 2 };
+
+            document.Subscribe($"{DATABINDING_PATH}[0]", GenerateCallbackForIndex(0));
+            document.Subscribe($"{DATABINDING_PATH}[1]", GenerateCallbackForIndex(1));
+            document.Subscribe($"{DATABINDING_PATH}[2]", GenerateCallbackForIndex(2));
+            document.Set($"{DATABINDING_PATH}", intArray);
+
+            Assert.AreEqual(calledIndices.OrderBy(i => i), intArray.OrderBy(i => i));
         }
     }
 }

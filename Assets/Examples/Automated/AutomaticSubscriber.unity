@@ -683,8 +683,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1234606438}
   m_HandleRect: {fileID: 1234606437}
   m_Direction: 2
-  m_Value: 0.5
-  m_Size: 0.615489
+  m_Value: 1
+  m_Size: 0.7499896
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -844,7 +844,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &588102856
 GameObject:
@@ -940,7 +940,7 @@ RectTransform:
   - {fileID: 1366411240}
   - {fileID: 1494281878}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1109,7 +1109,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &982107450
 GameObject:
@@ -1792,7 +1792,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1938428640
 GameObject:
@@ -1891,9 +1891,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f09cdd1cfdfc7bb4cb8970b7756297dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _document: {fileID: 2119776675}
-  _keyRoot: text.a.b.c
-  _targetObject: {fileID: 1938428641}
+  Document: {fileID: 0}
+  KeyRoot: 
+  TargetComponent: {fileID: 0}
 --- !u!1 &2039936118
 GameObject:
   m_ObjectHideFlags: 0
@@ -1929,7 +1929,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 226.49997}
+  m_AnchoredPosition: {x: 0, y: 183.99992}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2039936120
@@ -2009,9 +2009,9 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -17, y: -17}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &2043100736
 MonoBehaviour:
@@ -2135,7 +2135,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2119776677
 MonoBehaviour:
@@ -2149,4 +2149,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f877dd2e7b9e5834e8591039d917a75e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isShown: 0
   _text: {fileID: 130781214}

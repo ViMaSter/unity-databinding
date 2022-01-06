@@ -244,12 +244,12 @@ namespace DataBinding
         /// </summary>
         /// <param name="path">Absolute path to the value to create or overwrite</param>
         /// <param name="value">Value to start at <see cref="path"/></param>
-        public void Set<T>(string path, T value)
+        public void Set(string path, object value)
         {
             JToken valueAsJToken = JToken.FromObject(value!);
             List<string> splitPath = path.Split('.').ToList();
             string currentPath = "";
-            List<(string parentPath, Type valueType)> parentUpdates = new List<(string parentPath, Type valueType)>();
+            List<string> relatedUpdates = new List<string>();
             foreach (string keyInPath in splitPath)
             {
                 var arraySize = 0;
@@ -282,11 +282,11 @@ namespace DataBinding
                 switch (tokenAtPath!.Type)
                 {
                     case JTokenType.Object:
-                        parentUpdates.Add((currentPath, typeof(JObject)));
+                        relatedUpdates.Add(currentPath);
                         currentPath += ".";
                         continue;
                     case JTokenType.Array:
-                        parentUpdates.Add((currentPath, typeof(JArray)));
+                        relatedUpdates.Add(currentPath);
                         currentPath += ".";
                         continue;
                 }
@@ -298,17 +298,18 @@ namespace DataBinding
                 throw new NotSupportedException($"'{tokenAtPath.Path}' is of type '{tokenAtPath.Type}' not of '{valueAsJToken.Type}'; setting '{tokenAtPath.Path}' would replace this value to a different type implicitly. To change types, delete this value first.");
             }
 
-            parentUpdates = parentUpdates.Where(parentUpdate => parentUpdate.parentPath != path).ToList();
+            relatedUpdates.AddRange(GetKeysFromJToken(valueAsJToken).Select(key => string.Join(".", path, key).Replace(".[", "[")));
+            relatedUpdates = relatedUpdates.Where(parentUpdate => parentUpdate != path).ToList();
 
             var tokenOfPathInDocument = _documentRoot.SelectToken(path);
             tokenOfPathInDocument!.Replace(valueAsJToken);
 
-            foreach ((string parentPath, Type valueType) in parentUpdates)
+            foreach (string parentPath in relatedUpdates)
             {
-                InformSubscribersForPath(parentPath, _documentRoot.SelectToken(parentPath)!, valueType);
+                InformSubscribersForPath(parentPath, _documentRoot.SelectToken(parentPath)!);
             }
 
-            InformSubscribersForPath(path, valueAsJToken, typeof(T));
+            InformSubscribersForPath(path, valueAsJToken);
         }
 
         /// <summary>
@@ -365,9 +366,9 @@ namespace DataBinding
             }
         }
 
-        private void InformSubscribersForPath(string path, JToken valueAsJToken, Type valueType)
+        private void InformSubscribersForPath(string path, JToken valueAsJToken)
         {
-            void InformTypeSpecificSubscribersForPath(string innerPath, JToken innerValueAsJToken, Type innerValueType)
+            void InformTypeSpecificSubscribersForPath(string innerPath, JToken innerValueAsJToken)
             {
                 if (!_typeSpecificSubscriptions.ContainsKey(innerPath))
                 {
@@ -392,7 +393,7 @@ namespace DataBinding
 
                     if (attemptedCast == null)
                     {
-                        Debug.LogWarning($"{subscriberCollectionByType.Value.Count} subscribers of path '{innerPath}' are of '{subscriberCollectionByType.Key}', but the current value cannot be cast to it, as it's of type '{innerValueType}'");
+                        Debug.LogWarning($"{subscriberCollectionByType.Value.Count} subscribers of path '{innerPath}' are of '{subscriberCollectionByType.Key}', but the current value '{innerValueAsJToken}' cannot be cast to it");
                         continue;
                     }
                     _typeSpecificSubscriptions[innerPath][subscriberCollectionByType.Key].CallSubscriptions(innerValueAsJToken.ToObject(subscriberCollectionByType.Key));
@@ -409,7 +410,7 @@ namespace DataBinding
                 _typeAgnosticSubscriptions[innerPath].CallSubscriptions(innerValueAsJToken);
             }
 
-            InformTypeSpecificSubscribersForPath(path, valueAsJToken, valueType);
+            InformTypeSpecificSubscribersForPath(path, valueAsJToken);
             InformTypeAgnosticSubscribersForPath(path, valueAsJToken);
         }
 
