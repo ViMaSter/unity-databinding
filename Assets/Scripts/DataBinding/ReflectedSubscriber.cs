@@ -34,7 +34,7 @@ namespace DataBinding
             Debug.Assert(TargetComponent != null, "Reflected subscriber requires a target object to reflect changes in data binding to");
 
             // gather all fields and properties that are visible when the Inspector window is viewing the _targetObject
-            // and subscribe to their respective keys of the _document
+            // and subscribe to their respective keys of the Document
 
             // fields that are public
             var publicFields = TargetComponent.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public).Where(a => a.FieldType.IsPrimitive || a.FieldType == typeof(string)).ToList();

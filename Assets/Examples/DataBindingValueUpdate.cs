@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace DataBinding
@@ -7,29 +8,19 @@ namespace DataBinding
         [SerializeField] private Document _document;
         [SerializeField] private string _keyRoot;
         private Vector2 _position = Vector2.zero;
+        private PlayerInput movement;
 
-        private void Update()
+        private void Start()
         {
-            if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                _position.y--;
-                UpdateDocument();
-            }
-            if (Input.GetKeyDown(KeyCode.UpArrow))
-            {
-                _position.y++;
-                UpdateDocument();
-            }
-            if (Input.GetKeyDown(KeyCode.LeftArrow))
-            {
-                _position.x--;
-                UpdateDocument();
-            }
-            if (Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                _position.x++;
-                UpdateDocument();
-            }
+            movement = new PlayerInput();
+            movement.Default.Movement.performed += Movement_performed;
+        }
+
+        private void Movement_performed(UnityEngine.InputSystem.InputAction.CallbackContext movementContext)
+        {
+            var moveBy = movementContext.ReadValue<Vector2>();
+            _position += moveBy;
+            UpdateDocument();
         }
 
         private void UpdateDocument()
