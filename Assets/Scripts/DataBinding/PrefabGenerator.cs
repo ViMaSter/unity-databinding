@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace DataBinding
 {
@@ -10,15 +11,15 @@ namespace DataBinding
     [DefaultExecutionOrder(-103)]
     public class PrefabGenerator : MonoBehaviour
     {
-        [SerializeField]private Document _document;
-        [SerializeField]private string _keyRoot;
-        [SerializeField]private GameObject _prefab;
+        public Document Document;
+        public string KeyRoot;
+        public GameObject Prefab;
 
         private readonly Dictionary<int, GameObject> _instantiatedGameObjects = new Dictionary<int, GameObject>();
 
-        public void OnEnable()
+        public void Start()
         {
-            _document.Subscribe<JArray>($"{_keyRoot}", LengthChanged);
+            Document.Subscribe<JArray>($"{KeyRoot}", LengthChanged);
         }
 
         private void LengthChanged(JArray array)
@@ -39,23 +40,22 @@ namespace DataBinding
             {
                 for (var i = currentLength; i < newLength; ++i)
                 {
-                    var absolutePathOfPrefab = $"{_keyRoot}[{i}]";
-                    _instantiatedGameObjects[i] = Instantiate(_prefab, Vector3.zero, Quaternion.identity, transform);
+                    var absolutePathOfPrefab = $"{KeyRoot}[{i}]";
+                    _instantiatedGameObjects[i] = Instantiate(Prefab, Vector3.zero, Quaternion.identity, transform);
                     _instantiatedGameObjects[i].name = absolutePathOfPrefab;
                     foreach (var reflectedSubscriber in _instantiatedGameObjects[i].GetComponentsInChildren<ReflectedSubscriber>())
                     {
-                        reflectedSubscriber.UpdatePrefabKey(_document, absolutePathOfPrefab);
+                        reflectedSubscriber.UpdatePrefabKey(Document, absolutePathOfPrefab);
                     }
                 }
             }
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
             for (var i = 0; i < _instantiatedGameObjects.Count; i++)
             {
                 Destroy(_instantiatedGameObjects[i]);
-                _instantiatedGameObjects.Remove(i);
             }
         }
     }
