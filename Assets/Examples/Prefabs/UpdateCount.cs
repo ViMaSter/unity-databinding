@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace DataBinding.Examples.Prefabs
 {
@@ -17,6 +19,8 @@ namespace DataBinding.Examples.Prefabs
             {
                 public class Rect
                 {
+                    // ReSharper disable once InconsistentNaming Required for automated component property update
+                    public int x;
                     // ReSharper disable once InconsistentNaming Required for automated component property update
                     public int y;
                 }
@@ -36,36 +40,53 @@ namespace DataBinding.Examples.Prefabs
 
         [SerializeField] private Document _document;
         [SerializeField] private string _keyRoot;
-        private int _currentCount;
+        private PlayerInput _playerInput;
+        private readonly List<DataSet> _children = new List<DataSet>();
 
-        // Update is called once per frame
-        private void Update()
+        private void Start()
         {
-            if (Input.GetKeyDown(KeyCode.UpArrow))
+            _playerInput = new PlayerInput();
+            _playerInput.Enable();
+            _playerInput.Default.Movement.performed += OnMovementPerformed;
+        }
+
+        private void OnMovementPerformed(InputAction.CallbackContext obj)
+        {
+            var change = obj.ReadValue<Vector2>();
+            if (change == Vector2.zero)
             {
-                ++_currentCount;
-                _document.Set(_keyRoot, Enumerable.Range(0, _currentCount).Select(i => new DataSet(i)));
-            }
-            if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                --_currentCount;
-                _currentCount = Math.Max(0, _currentCount);
-                _document.Set(_keyRoot, Enumerable.Range(0, _currentCount).Select(i => new DataSet(i)));
+                return;
             }
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            // Up and down arrow change count of items inside array
+            if (change.y > 0)
             {
-                if (_currentCount == 0)
+                _children.Add(new DataSet(_children.Count));
+            }
+
+            if (_children.Any())
+            {
+                // Left and right arrow change value of last item
+                if (change.x > 0)
                 {
-                    return;
+                    _children[_children.Count - 1].Rect.anchoredPosition.x += 15;
                 }
 
-                var labelAsInt = int.Parse(_document.Get<string>($"{_keyRoot}[{_currentCount - 1}].label.text"));
-                ++labelAsInt;
+                if (change.x < 0)
+                {
+                    _children[_children.Count - 1].Rect.anchoredPosition.x -= 15;
+                    _children[_children.Count - 1].Rect.anchoredPosition.x = Math.Max(0, _children[_children.Count - 1].Rect.anchoredPosition.x);
+                }
 
-                _document.Set($"{_keyRoot}[{_currentCount - 1}].{nameof(DataSet.Label)}.{nameof(DataSet.LabelValues.text)}", labelAsInt.ToString());
-                _document.Set($"{_keyRoot}[{_currentCount - 1}].{nameof(DataSet.Rect)}.{nameof(DataSet.Rect.anchoredPosition)}.{nameof(DataSet.Rect.anchoredPosition.y)}", labelAsInt*-15);
+                // Up and down arrow change count of items inside array
+                if (change.y < 0)
+                {
+                    _children.RemoveAt(_children.Count - 1);
+                }
             }
+
+            _document.Set(_keyRoot, _children);
+
         }
     }
 }

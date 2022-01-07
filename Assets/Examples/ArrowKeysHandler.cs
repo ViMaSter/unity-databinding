@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DataBinding
 {
-    public class DataBindingValueUpdate : MonoBehaviour
+    public class ArrowKeysHandler : MonoBehaviour
     {
         [SerializeField] private Document _document;
         [SerializeField] private string _keyRoot;
@@ -13,13 +13,13 @@ namespace DataBinding
         private void Start()
         {
             movement = new PlayerInput();
-            movement.Default.Movement.performed += Movement_performed;
+            movement.Enable();
         }
 
-        private void Movement_performed(UnityEngine.InputSystem.InputAction.CallbackContext movementContext)
+        private void Update()
         {
-            var moveBy = movementContext.ReadValue<Vector2>();
-            _position += moveBy;
+            var moveBy = movement.Default.Movement.ReadValue<Vector2>();
+            _position += moveBy * (Time.deltaTime * 100);
             UpdateDocument();
         }
 

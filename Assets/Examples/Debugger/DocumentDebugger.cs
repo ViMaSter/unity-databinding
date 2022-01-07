@@ -5,54 +5,22 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(Document))]
 public class DocumentDebugger : MonoBehaviour
 {
-    [SerializeField] private bool _isShown;
+    private bool _isShown;
     public Document Document;
     public Text Text;
-    public IInputActionCollection playerInput;
+    public IInputActionCollection PlayerInput;
 
     private const string DEBUG_PATH = "_global.document.debug";
 
     private void Start()
     {
-        playerInput ??= new PlayerInput();
-        playerInput.Enable();
-        playerInput.First(a => a.name == "Toggle Debug View").performed += OnKeyCombinationPerformed;
+        PlayerInput ??= new PlayerInput();
+        PlayerInput.Enable();
+        PlayerInput.First(a => a.name == "Toggle Debug View").performed += OnKeyCombinationPerformed;
 
-        Document = GetComponent<Document>();
-        Debug.Assert(Document != null, "Document debugger must be attached to the same game object as the Document component");
         Document.Subscribe(DEBUG_PATH, OnToggleDebugFlag);
-
-        var childObject = new { d = 1, e = 2.0f, f = "3" };
-        var parentObject = new object[] { childObject, childObject, childObject };
-        Document.Set("data", new {
-            a = new {
-                b = new {
-                    c = parentObject
-                } , 
-                d = new {
-                    c = parentObject
-                },
-                e = new
-                {
-                    c = parentObject
-                },
-                f = new
-                {
-                    c = parentObject
-                },
-                g = new
-                {
-                    c = parentObject
-                },
-                h = new
-                {
-                    c = parentObject
-                }
-            }
-        });
     }
 
     private void OnKeyCombinationPerformed(InputAction.CallbackContext obj)

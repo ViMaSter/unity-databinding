@@ -93,9 +93,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f09cdd1cfdfc7bb4cb8970b7756297dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _document: {fileID: 0}
-  _keyRoot: $0.label
-  _targetObject: {fileID: 262479057440026798}
+  Document: {fileID: 0}
+  KeyRoot: $0.Rect
+  TargetComponent: {fileID: 262479057440026796}
 --- !u!114 &262479057440026792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,6 +108,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f09cdd1cfdfc7bb4cb8970b7756297dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _document: {fileID: 0}
-  _keyRoot: $0.rect
-  _targetObject: {fileID: 262479057440026796}
+  Document: {fileID: 0}
+  KeyRoot: $0.Label
+  TargetComponent: {fileID: 262479057440026798}
