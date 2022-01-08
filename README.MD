@@ -6,7 +6,7 @@ This package allows data-binding between components using a JSON document.
 The document can be **updated** via **C#** or **automatically generated UI events** and **subscribed to** to either via **C#** or **automatically update any Unity `MonoBehavior`/`Component`**.
 
 ## Examples
-Clone this repository and open any of the scenes insides `Assets/Examples`:
+Clone this repository and open any of the scenes inside. `Assets/Examples` (Use `Ctrl+Shift+D` to see a debug view of the `Document`!)
 
 - <details>
     <summary><b>Update any component automatically</b></summary>
@@ -20,6 +20,21 @@ Clone this repository and open any of the scenes insides `Assets/Examples`:
 
     #### `ArrowKeysHandler.cs`
     This script listens to arrow key presses. Based on those, a `x` and `y` coordinate inside the `Document` are set.
+  </details>
+
+- <details>
+    <summary><b>Handle Unity UI events</b></summary>
+    
+    ## EventGenerator.scene
+
+    This scene uses an `EventGenerator` which makes interactive UI elements (like `Button`s) automatically send their events to the `Document` for others to subscribe to.
+    
+    #### `EventGenerator.cs`
+    This component scans its `GameObject` for any `Component` that can generate events.
+    In this scene, each Button has an `EventGenerator`, so there's `Left`, `Right`, `Up`, `Down` objects with `down` and `clicked` events
+
+    #### `UIArrowEventSubscriber.cs`
+    This script subscribes to the buttons' events inside the `Document` and - when pressed - changes the text's position via data-binding like in `AutomatedSubscriber.scene`
   </details>
 
 - <details>

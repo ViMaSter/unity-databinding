@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DataBinding;
+using DataBinding.EventGeneration;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;

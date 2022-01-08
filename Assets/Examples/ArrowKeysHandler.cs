@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace DataBinding
+namespace DataBinding.EventGeneration
 {
     public class ArrowKeysHandler : MonoBehaviour
     {

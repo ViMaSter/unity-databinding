@@ -1,7 +1,7 @@
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-namespace DataBinding.Examples
+namespace DataBinding.EventGeneration.Examples
 {
     /// <summary>
     /// Example implementation of a manual subscriber to a specific path inside a data binding document

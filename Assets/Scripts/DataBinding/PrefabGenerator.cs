@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-namespace DataBinding
+namespace DataBinding.EventGeneration
 {
     /// <summary>
     /// Generates instances of prefabs and binds them data based on the amount of elements in an array

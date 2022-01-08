@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace DataBinding.Examples.Prefabs
+namespace DataBinding.EventGeneration.Examples.Prefabs
 {
     public class UpdateCount : MonoBehaviour
     {
