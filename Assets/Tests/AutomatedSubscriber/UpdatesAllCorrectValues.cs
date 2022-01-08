@@ -3,7 +3,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace Tests.ReflectedSubscriber
+namespace Tests.AutomatedSubscriber
 {
     public class CameraSubscriber : MonoBehaviour
     {
@@ -15,11 +15,11 @@ namespace Tests.ReflectedSubscriber
             var document = newGameObject.AddComponent<global::DataBinding.Document>();
 
             var newCamera = newGameObject.AddComponent<Camera>();
-            var reflectedSubscriber = newGameObject.AddComponent<global::DataBinding.ReflectedSubscriber>();
+            var automatedSubscriber = newGameObject.AddComponent<global::DataBinding.AutomatedSubscriber>();
 
-            reflectedSubscriber.Document = document;
-            reflectedSubscriber.TargetComponent = newCamera;
-            reflectedSubscriber.KeyRoot = path;
+            automatedSubscriber.Document = document;
+            automatedSubscriber.TargetComponent = newCamera;
+            automatedSubscriber.DocumentPath = path;
 
             yield return new WaitForEndOfFrame();
 
@@ -49,11 +49,11 @@ namespace Tests.ReflectedSubscriber
             var document = newGameObject.AddComponent<global::DataBinding.Document>();
 
             var exampleTargetComponent = newGameObject.AddComponent<ExampleTargetComponent>();
-            var reflectedSubscriber = newGameObject.AddComponent<global::DataBinding.ReflectedSubscriber>();
+            var automatedSubscriber = newGameObject.AddComponent<global::DataBinding.AutomatedSubscriber>();
 
-            reflectedSubscriber.Document = document;
-            reflectedSubscriber.TargetComponent = exampleTargetComponent;
-            reflectedSubscriber.KeyRoot = path;
+            automatedSubscriber.Document = document;
+            automatedSubscriber.TargetComponent = exampleTargetComponent;
+            automatedSubscriber.DocumentPath = path;
 
             yield return new WaitForEndOfFrame();
 

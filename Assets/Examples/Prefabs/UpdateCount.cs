@@ -39,7 +39,7 @@ namespace DataBinding.Examples.Prefabs
         }
 
         [SerializeField] private Document _document;
-        [SerializeField] private string _keyRoot;
+        [SerializeField] private string _documentPath;
         private PlayerInput _playerInput;
         private readonly List<DataSet> _children = new List<DataSet>();
 
@@ -85,7 +85,7 @@ namespace DataBinding.Examples.Prefabs
                 }
             }
 
-            _document.Set(_keyRoot, _children);
+            _document.Set(_documentPath, _children);
 
         }
     }

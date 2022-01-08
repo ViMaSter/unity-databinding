@@ -335,11 +335,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4923922925738084452, guid: c4deaf444f682d9448cbef36f9bf4a1d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -19447.008
+      value: -20302.674
       objectReference: {fileID: 0}
     - target: {fileID: 4923922925738084452, guid: c4deaf444f682d9448cbef36f9bf4a1d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 1598.19
+      value: 1648.19
       objectReference: {fileID: 0}
     - target: {fileID: 4923922925743276588, guid: c4deaf444f682d9448cbef36f9bf4a1d, type: 3}
       propertyPath: m_AnchorMax.x
@@ -541,7 +541,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _document: {fileID: 2119776675}
-  _keyToSubscribeTo: text
+  _documentPath: UIElement
   _textElementTransform: {fileID: 1938428641}
 --- !u!1 &2119776673
 GameObject:
@@ -574,7 +574,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _document: {fileID: 2119776675}
-  _keyRoot: text
+  _documentPath: UIElement
 --- !u!114 &2119776675
 MonoBehaviour:
   m_ObjectHideFlags: 0

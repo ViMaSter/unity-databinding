@@ -174,7 +174,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Document: {fileID: 1111644110}
-  KeyRoot: UIElement
+  DocumentPath: UIElement
   TargetComponent: {fileID: 50971971}
 --- !u!114 &50971973
 MonoBehaviour:
@@ -212,7 +212,9 @@ MonoBehaviour:
   m_Text: 'Use the arrow keys to change the position of this UI element!
 
     This
-    is done using a ReflectedSubscriber, requiring no code to update this component.'
+    is done using an AutomatedSubscriber,
+
+    requiring no code to update this component.'
 --- !u!222 &50971974
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -347,7 +349,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _document: {fileID: 1111644110}
-  _keyRoot: UIElement
+  _documentPath: UIElement
 --- !u!4 &1111644112
 Transform:
   m_ObjectHideFlags: 0
@@ -491,11 +493,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4923922925738084452, guid: c4deaf444f682d9448cbef36f9bf4a1d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -19367.068
+      value: -20391.146
       objectReference: {fileID: 0}
     - target: {fileID: 4923922925738084452, guid: c4deaf444f682d9448cbef36f9bf4a1d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 1598.19
+      value: 1648.19
+      objectReference: {fileID: 0}
+    - target: {fileID: 4923922925743276588, guid: c4deaf444f682d9448cbef36f9bf4a1d, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4923922925743276588, guid: c4deaf444f682d9448cbef36f9bf4a1d, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4923922925743276588, guid: c4deaf444f682d9448cbef36f9bf4a1d, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -17
+      objectReference: {fileID: 0}
+    - target: {fileID: 4923922925743276588, guid: c4deaf444f682d9448cbef36f9bf4a1d, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -17
       objectReference: {fileID: 0}
     - target: {fileID: 4923922926006510966, guid: c4deaf444f682d9448cbef36f9bf4a1d, type: 3}
       propertyPath: m_AnchorMax.x

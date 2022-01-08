@@ -94,7 +94,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Document: {fileID: 0}
-  KeyRoot: $0.Rect
+  DocumentPath: $0.Rect
   TargetComponent: {fileID: 262479057440026796}
 --- !u!114 &262479057440026792
 MonoBehaviour:
@@ -109,5 +109,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Document: {fileID: 0}
-  KeyRoot: $0.Label
+  DocumentPath: $0.Label
   TargetComponent: {fileID: 262479057440026798}

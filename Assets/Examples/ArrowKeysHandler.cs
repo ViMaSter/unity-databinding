@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace DataBinding
@@ -6,7 +5,7 @@ namespace DataBinding
     public class ArrowKeysHandler : MonoBehaviour
     {
         [SerializeField] private Document _document;
-        [SerializeField] private string _keyRoot;
+        [SerializeField] private string _documentPath;
         private Vector2 _position = Vector2.zero;
         private PlayerInput movement;
 
@@ -25,7 +24,7 @@ namespace DataBinding
 
         private void UpdateDocument()
         {
-            _document.Set(_keyRoot, new { anchoredPosition = new { _position.x, _position.y } });
+            _document.Set(_documentPath, new { anchoredPosition = new { _position.x, _position.y } });
         }
     }
 }

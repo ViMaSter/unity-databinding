@@ -167,7 +167,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Document: {fileID: 447077075}
-  KeyRoot: testElements
+  DocumentPath: UIElements
   Prefab: {fileID: 262479057440026793, guid: d2ec7d6def1fdf74ab525a29d35de46f, type: 3}
 --- !u!114 &447077078
 MonoBehaviour:
@@ -182,7 +182,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _document: {fileID: 447077075}
-  _keyRoot: testElements
+  _documentPath: UIElements
 --- !u!4 &447077079
 Transform:
   m_ObjectHideFlags: 0
@@ -226,7 +226,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4923922925738084452, guid: c4deaf444f682d9448cbef36f9bf4a1d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -20491.72
+      value: -22297.11
       objectReference: {fileID: 0}
     - target: {fileID: 4923922925738084452, guid: c4deaf444f682d9448cbef36f9bf4a1d, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -411,24 +411,31 @@ MonoBehaviour:
     1. Use the up and down arrow keys to add or remove array
     elements respectively
 
-    2. Use space to update the JSON of the last added
-    element
+    2. Notice the new child "GameObject" being added and
+    removed to/from the "Canvas" GameObject
 
-    3. Notice the new child "GameObject" being added and removed to/from
-    the "Canvas" GameObject
+    3. Use left and right arrow keys
+    to update the position of the element added last
 
-    4. The "GameObject" "Canvas" has a "PrefabGenerator"
-    compnent set to the key "testElements" and a "Prefab"
+    4. Notice the position
+    of the UI element changing
 
-    5. The "Prefab" has
-    a "ReflectedSubscribers" component set up for a "Text" and "RectTransform" with
-    "$0.label" and "$0.rect"
 
-    6. When a prefab is instantiated, "$0" is replaced
-    with whatever key the "PrefabGenerator" points to and the index of the child
+    For this to work...
 
-    7.
-    Thereby each prefab instance is set to "testElements[INDEX].label" and "testElements[INDEX].rect"'
+    1. The "GameObject"
+    "Canvas" has a "PrefabGenerator" compnent set to the key "UIElements" and a "Prefab"
+
+    5.
+    The "Prefab" has an "AutomatedSubscriber" component set up for a "Text" and "RectTransform"
+    with "$0.label" and "$0.rect"
+
+    6. When a prefab is instantiated, "$0" is
+    replaced with whatever key the "PrefabGenerator" points to and the index of the
+    child
+
+    7. Thereby each prefab instance is set to "UIElements[INDEX].label"
+    and "UIElements[INDEX].rect"'
 --- !u!222 &1051857889
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -634,5 +641,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Document: {fileID: 447077075}
-  KeyRoot: testElements
+  DocumentPath: UIElements
   Prefab: {fileID: 262479057440026793, guid: d2ec7d6def1fdf74ab525a29d35de46f, type: 3}

@@ -25,7 +25,7 @@ public class ManageGameObjects : MonoBehaviour
 
         var prefab = Resources.Load<GameObject>("Prefab");
         generator.Prefab = prefab;
-        generator.KeyRoot = PATH;
+        generator.DocumentPath = PATH;
         generator.Document = document;
 
         const int childCount = 3;
@@ -38,63 +38,63 @@ public class ManageGameObjects : MonoBehaviour
 
         for (var i = 0; i < childCount; i++)
         {
-            Assert.IsNull(GameObject.Find($"{generator.KeyRoot}[{i}]"));
+            Assert.IsNull(GameObject.Find($"{generator.DocumentPath}[{i}]"));
         }
 
         yield return new WaitForEndOfFrame();
 
         // initially create childCount objects
-        document.Set(generator.KeyRoot, allChildData);
+        document.Set(generator.DocumentPath, allChildData);
 
         yield return new WaitForEndOfFrame();
 
         for (var i = 0; i < childCount; i++)
         {
-            var childPath = $"{generator.KeyRoot}[{i}]";
+            var childPath = $"{generator.DocumentPath}[{i}]";
             Assert.IsNotNull(GameObject.Find(childPath));
-            Assert.AreEqual(childPath, GameObject.Find(childPath).GetComponent<ReflectedSubscriber>().KeyRoot);
+            Assert.AreEqual(childPath, GameObject.Find(childPath).GetComponent<AutomatedSubscriber>().DocumentPath);
             Assert.AreEqual(i.ToString(), GameObject.Find(childPath).GetComponent<UnityEngine.UI.Text>().text);
         }
 
         // delete the last object
         var reducedChildData = new List<object>(allChildData);
         reducedChildData.RemoveAt(childCount-1);
-        document.Set(generator.KeyRoot, reducedChildData);
+        document.Set(generator.DocumentPath, reducedChildData);
         yield return new WaitForEndOfFrame();
 
         for (var i = 0; i < childCount-1; i++)
         {
-            var childPath = $"{generator.KeyRoot}[{i}]";
+            var childPath = $"{generator.DocumentPath}[{i}]";
             Assert.IsNotNull(GameObject.Find(childPath));
-            Assert.AreEqual(childPath, GameObject.Find(childPath).GetComponent<ReflectedSubscriber>().KeyRoot);
+            Assert.AreEqual(childPath, GameObject.Find(childPath).GetComponent<AutomatedSubscriber>().DocumentPath);
             Assert.AreEqual(i.ToString(), GameObject.Find(childPath).GetComponent<UnityEngine.UI.Text>().text);
         }
-        Assert.IsNull(GameObject.Find($"{generator.KeyRoot}[{childCount - 1}]"));
+        Assert.IsNull(GameObject.Find($"{generator.DocumentPath}[{childCount - 1}]"));
 
         // re-create the last object
-        document.Set(generator.KeyRoot, allChildData);
+        document.Set(generator.DocumentPath, allChildData);
         yield return new WaitForEndOfFrame();
 
         for (var i = 0; i < childCount; i++)
         {
-            var childPath = $"{generator.KeyRoot}[{i}]";
+            var childPath = $"{generator.DocumentPath}[{i}]";
             Assert.IsNotNull(GameObject.Find(childPath));
-            Assert.AreEqual(childPath, GameObject.Find(childPath).GetComponent<ReflectedSubscriber>().KeyRoot);
+            Assert.AreEqual(childPath, GameObject.Find(childPath).GetComponent<AutomatedSubscriber>().DocumentPath);
             Assert.AreEqual(i.ToString(), GameObject.Find(childPath).GetComponent<UnityEngine.UI.Text>().text);
         }
 
         // delete the last object again
-        document.Set(generator.KeyRoot, reducedChildData);
+        document.Set(generator.DocumentPath, reducedChildData);
         yield return new WaitForEndOfFrame();
 
         for (var i = 0; i < childCount-1; i++)
         {
-            var childPath = $"{generator.KeyRoot}[{i}]";
+            var childPath = $"{generator.DocumentPath}[{i}]";
             Assert.IsNotNull(GameObject.Find(childPath));
-            Assert.AreEqual(childPath, GameObject.Find(childPath).GetComponent<ReflectedSubscriber>().KeyRoot);
+            Assert.AreEqual(childPath, GameObject.Find(childPath).GetComponent<AutomatedSubscriber>().DocumentPath);
             Assert.AreEqual(i.ToString(), GameObject.Find(childPath).GetComponent<UnityEngine.UI.Text>().text);
         }
-        Assert.IsNull(GameObject.Find($"{generator.KeyRoot}[{childCount - 1}]"));
+        Assert.IsNull(GameObject.Find($"{generator.DocumentPath}[{childCount - 1}]"));
     }
 
     [UnityTest]
@@ -106,7 +106,7 @@ public class ManageGameObjects : MonoBehaviour
 
         var prefab = Resources.Load<GameObject>("Prefab");
         generator.Prefab = prefab;
-        generator.KeyRoot = PATH;
+        generator.DocumentPath = PATH;
         generator.Document = document;
 
         const int childCount = 3;
@@ -127,7 +127,7 @@ public class ManageGameObjects : MonoBehaviour
         {
             var childPath = $"{PATH}[{i}]";
             Assert.IsNotNull(GameObject.Find(childPath));
-            Assert.AreEqual(childPath, GameObject.Find(childPath).GetComponent<ReflectedSubscriber>().KeyRoot);
+            Assert.AreEqual(childPath, GameObject.Find(childPath).GetComponent<AutomatedSubscriber>().DocumentPath);
             Assert.AreEqual(i.ToString(), GameObject.Find(childPath).GetComponent<UnityEngine.UI.Text>().text);
         }
 
