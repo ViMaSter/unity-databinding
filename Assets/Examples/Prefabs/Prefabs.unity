@@ -226,7 +226,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4923922925738084452, guid: c4deaf444f682d9448cbef36f9bf4a1d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -22297.11
+      value: -22592.244
       objectReference: {fileID: 0}
     - target: {fileID: 4923922925738084452, guid: c4deaf444f682d9448cbef36f9bf4a1d, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -434,8 +434,8 @@ MonoBehaviour:
     replaced with whatever key the "PrefabGenerator" points to and the index of the
     child
 
-    7. Thereby each prefab instance is set to "UIElements[INDEX].label"
-    and "UIElements[INDEX].rect"'
+    7. Thereby each prefab instance is set to "UIElements[INDEX].Label"
+    and "UIElements[INDEX].Rect"'
 --- !u!222 &1051857889
 CanvasRenderer:
   m_ObjectHideFlags: 0
