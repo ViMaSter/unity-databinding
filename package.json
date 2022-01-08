@@ -1,13 +1,13 @@
 {
-    "name": "com.ViMaSter.UnityDataBinding",
+    "name": "com.vimaster.databinding",
     "version": "1.0.0",
-    "displayName": "Unity Data-Binding",
-    "description": "This package allows data-binding between components using a JSON blob called a Document.",
+    "displayName": "Unity Data Binding",
+    "description": "This package allows data binding between components using a JSON blob called a Document.",
     "unity": "2020.3",
     "unityRelease": "15f2",
-    "documentationUrl": "https://github.com/ViMaSter/unity-data-binding",
-    "changelogUrl": "https://github.com/ViMaSter/unity-data-binding/releases",
-    "licensesUrl": "https://github.com/ViMaSter/unity-data-binding/blob/main/LICENSE.MD",
+    "documentationUrl": "https://github.com/ViMaSter/unity-databinding",
+    "changelogUrl": "https://github.com/ViMaSter/unity-databinding/releases",
+    "licensesUrl": "https://github.com/ViMaSter/unity-databinding/blob/main/LICENSE.MD",
     "author": {
         "name": "Vincent Mahnke",
         "email": "vincent@mahn.ke",
@@ -39,7 +39,7 @@
         "com.unity.modules.umbra": "1.0.0",
         "com.unity.modules.vehicles": "1.0.0",
         "com.unity.modules.video": "1.0.0",
-        "com.unity.modules.wind": "1.0.0",
+        "com.unity.modules.wind": "1.0.0"
     },
     "samples": [
         {
