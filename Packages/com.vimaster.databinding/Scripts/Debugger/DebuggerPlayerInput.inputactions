@@ -1,0 +1,66 @@
+{
+    "name": "DebuggerPlayerInput",
+    "maps": [
+        {
+            "name": "Default",
+            "id": "dbf9290a-44b6-47bc-bb9d-f5f646a7b9c8",
+            "actions": [
+                {
+                    "name": "Toggle Debug View",
+                    "type": "Button",
+                    "id": "061c8109-8cfe-4d7f-8fda-a8c06b437452",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "Button With Two Modifiers",
+                    "id": "3ab23e83-cd49-4783-b730-4e029b82d9fd",
+                    "path": "ButtonWithTwoModifiers",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Toggle Debug View",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier1",
+                    "id": "f88b8611-e14b-454e-9869-fcbfa0715fcf",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Toggle Debug View",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "modifier2",
+                    "id": "6db059cc-8d38-4085-b132-5e9885c533c8",
+                    "path": "<Keyboard>/ctrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Toggle Debug View",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "button",
+                    "id": "22360ae4-12da-4ba0-b144-592e54594527",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Toggle Debug View",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

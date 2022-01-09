@@ -1,5 +1,5 @@
-# Unity Data-binding
-This package allows data-binding between components using a JSON blob called a `Document`.
+# Unity Data Binding
+This package allows data binding between components using a JSON blob called a `Document`.
 
 ![alt text](https://github.com/ViMaSter/unity-data-binding/raw/main/example.gif "Example of a UI label being moved using data-binding")
 
@@ -35,7 +35,7 @@ Clone this repository and open any of the scenes inside `Assets/Examples`.
     In this scene, each GameObject with a `Button` also has an `EventGenerator`, so that there's `Left`, `Right`, `Up`, `Down` objects with `down` and `clicked` events
 
     #### `UIArrowEventSubscriber.cs`
-    This script subscribes to the buttons' events inside the `Document` (`Right.events.down`, `Left.events.down`, etc.) and - when pressed - changes the text's position via data-binding like in `AutomatedSubscriber.scene`
+    This script subscribes to the buttons' events inside the `Document` (`Right.events.down`, `Left.events.down`, etc.) and - when pressed - changes the text's position via data binding like in `AutomatedSubscriber.scene`
   </details>
 
 - <details>
