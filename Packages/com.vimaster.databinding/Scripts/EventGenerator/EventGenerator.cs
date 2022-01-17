@@ -5,11 +5,8 @@ using UnityEngine;
 namespace DataBinding.EventGeneration
 {
     [DefaultExecutionOrder(-110)]
-    public class EventGenerator : MonoBehaviour
+    public class EventGenerator : SupportsRelativeDocumentPath
     {
-        public Document Document;
-        public string Path;
-
         private static bool FindGeneratorComponent(Type type) => type.GetInterfaces().Any(subInterface => subInterface == typeof(IComponentEventGenerator));
 
         void Start()
@@ -31,7 +28,7 @@ namespace DataBinding.EventGeneration
                 }
 
                 var constructor = generatorClass.GetConstructor(new[] {typeof(Document), typeof(string), typeof(Component)});
-                constructor!.Invoke(new object[] {Document, Path, componentOnThisGameObject});
+                constructor!.Invoke(new object[] {Document, DocumentPath, componentOnThisGameObject});
             }
         }
     }

@@ -11,26 +11,17 @@ namespace DataBinding
     /// Automatically bind all fields and properties exposed to the Inspector of a target object to a key of a data binding document
     /// </summary>
     [DefaultExecutionOrder(-101)]
-    public class AutomatedSubscriber : MonoBehaviour
+    public class AutomatedSubscriber : SupportsRelativeDocumentPath
     {
-        public Document Document;
-        public string DocumentPath;
         public Component TargetComponent;
         private readonly List<Tuple<string, Action<JToken>>> _activeSubscriptions = new List<Tuple<string, Action<JToken>>>();
         private readonly List<Type> _supportedTypes = new List<Type> { typeof(string), typeof(Vector2), typeof(Vector3), typeof(Rect)};
 
-        public void UpdatePrefabKey(Document document, string path)
-        {
-            Debug.Assert(DocumentPath.Contains("$0"), "_documentPath cannot be updated, as it contains no relative qualifier '$0'");
-            Document = document;
-            DocumentPath = DocumentPath.Replace("$0", path);
-        }
-
         public void Start()
         {
-            Debug.Assert(Document != null, "Reflected subscriber has no document set and thereby cannot subscribe to data binding");
-            Debug.Assert(!string.IsNullOrEmpty(DocumentPath), "Reflected subscriber cannot have an empty string as key root");
-            Debug.Assert(TargetComponent != null, "Reflected subscriber requires a target object to reflect changes in data binding to");
+            Debug.Assert(Document != null, "AutomatedSubscriber has no document set and thereby cannot subscribe to data binding");
+            Debug.Assert(!string.IsNullOrEmpty(DocumentPath), "AutomatedSubscriber cannot have an empty string as key root");
+            Debug.Assert(TargetComponent != null, "AutomatedSubscriber requires a target object to reflect changes in data binding to");
 
             // gather all fields and properties that are visible when the Inspector window is viewing the _targetObject
             // and subscribe to their respective keys of the Document

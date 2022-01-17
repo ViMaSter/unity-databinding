@@ -14,7 +14,10 @@ namespace DataBinding.EventGeneration.Implementations.UnityEngine.UI
 
             private void OnDisable()
             {
-                _document.Delete($"{_path}");
+                if (_document != null)
+                {
+                    _document.Delete($"{_path}");
+                }
             }
 
             public void Setup(Document document, string path)

@@ -2,16 +2,14 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-namespace DataBinding.EventGeneration
+namespace DataBinding
 {
     /// <summary>
     /// Generates instances of prefabs and binds them data based on the amount of elements in an array
     /// </summary>
     [DefaultExecutionOrder(-103)]
-    public class PrefabGenerator : MonoBehaviour
+    public class PrefabGenerator : SupportsRelativeDocumentPath
     {
-        public Document Document;
-        public string DocumentPath;
         public GameObject Prefab;
 
         private readonly Dictionary<int, GameObject> _instantiatedGameObjects = new Dictionary<int, GameObject>();
@@ -42,9 +40,9 @@ namespace DataBinding.EventGeneration
                     var absolutePathOfPrefab = $"{DocumentPath}[{i}]";
                     _instantiatedGameObjects[i] = Instantiate(Prefab, Vector3.zero, Quaternion.identity, transform);
                     _instantiatedGameObjects[i].name = absolutePathOfPrefab;
-                    foreach (var automatedSubscriber in _instantiatedGameObjects[i].GetComponentsInChildren<AutomatedSubscriber>())
+                    foreach (var componentThatSupportsRelativeDocumentPath in _instantiatedGameObjects[i].GetComponentsInChildren<SupportsRelativeDocumentPath>())
                     {
-                        automatedSubscriber.UpdatePrefabKey(Document, absolutePathOfPrefab);
+                        componentThatSupportsRelativeDocumentPath.PropagateParentSettings(Document, absolutePathOfPrefab);
                     }
                 }
             }

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 262479057440026798}
   - component: {fileID: 262479057440026799}
   m_Layer: 5
-  m_Name: Prefab
+  m_Name: AutomatedSubscriberPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -93,5 +93,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Document: {fileID: 0}
-  KeyRoot: $0
+  DocumentPath: $0
   TargetComponent: {fileID: 262479057440026798}
